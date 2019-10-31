@@ -1,6 +1,6 @@
-AR			= $(CROSS_COMPILE)ar
-CC			= $(CROSS_COMPILE)gcc
-CXX			= $(CROSS_COMPILE)g++
+AR		= $(CROSS_COMPILE)ar
+CC		= $(CROSS_COMPILE)gcc
+CXX		= $(CROSS_COMPILE)g++
 LDSHFLAGS	= -rdynamic -shared 
 ARFLAGS		= rcv
 CFLAGS		= -Wall -g -fPIC -I../src
