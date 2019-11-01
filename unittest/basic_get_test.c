@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
         /* Disconnect if we can't validate server's cert */
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
 
-		/* Verify the cert's name against host */
+        /* Verify the cert's name against host */
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
 
         /* Perform the request, res will get the return code */

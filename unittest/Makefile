@@ -5,7 +5,7 @@ LDSHFLAGS	= -rdynamic -shared
 ARFLAGS		= rcv
 CFLAGS		= -Wall -g -fPIC -I../src
 CXXFLAGS	= -Wall -g -fPIC -I../src
-LDFLAGS		= -L.. -lcurl -Wl,-R -Wl,.. 
+LDFLAGS		= -L.. -liotexemb -lcurl -Wl,-R -Wl,..
 
 SRCS=$(wildcard *.c) $(wildcard *.cpp)
 OBJDIR=../objs
@@ -31,6 +31,7 @@ $(TARGETS):
 
 # Unittest 
 basic_get_test: basic_get_test.o
+compose_url_test: compose_url_test.o
 
 test:$(TARGETS)
 	@chmod u+x $(SCRIPTS)/*.sh
