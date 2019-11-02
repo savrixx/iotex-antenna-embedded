@@ -2,9 +2,7 @@
 #include <errno.h>
 #include <string.h>
 #include <curl/curl.h>
-
-#define DEF_CA_INFO "/etc/ssl/certs/ca-certificates.crt"
-#define DEF_CA_PATH "/etc/ssl/certs"
+#include "config.h"
 
 
 int main(int argc, char **argv) {

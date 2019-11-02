@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
 
     for (i = 0; i < IotexReqTail; i++) {
 
-        fprintf(stdout, "%s\n", req_compose__url(url, sizeof(url), (IotexHttpRequests)i));
+        fprintf(stdout, "%s\n", req_compose_url(url, sizeof(url), (IotexHttpRequests)i));
     }
 
     return 0;

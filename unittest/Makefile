@@ -32,6 +32,7 @@ $(TARGETS):
 # Unittest 
 basic_get_test: basic_get_test.o
 compose_url_test: compose_url_test.o
+request_unittest: request_unittest.o
 
 test:$(TARGETS)
 	@chmod u+x $(SCRIPTS)/*.sh

@@ -1,6 +1,6 @@
-AR			= $(CROSS_COMPILE)ar
-CC			= $(CROSS_COMPILE)gcc
-CXX			= $(CROSS_COMPILE)g++
+AR		= $(CROSS_COMPILE)ar
+CC		= $(CROSS_COMPILE)gcc
+CXX		= $(CROSS_COMPILE)g++
 CFLAGS		= -Wall -g -fPIC
 CXXFLAGS	= -Wall -g -fPIC
 LDSHFLAGS	= -rdynamic -shared -fPIC
@@ -57,7 +57,7 @@ libiotexemb.a:$(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^
 
 libiotexemb.so:$(OBJECTS)
-	$(CC) $(LDSHFLAGS)	-o $@ $^
+	$(CC) $(LDSHFLAGS) -o $@ $^
 
 depend.d:$(SOURCES) $(HEADERS)
 	$(CC) $(CFLAGS) -MM $^ > $@

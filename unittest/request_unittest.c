@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include "config.h"
+#include "unittest.h"
+#include "../src/debug.h"
+#include "../src/request.h"
+#include "test_config.h"
+
+
+#define MAX_RESPONSE_LEN (16 * 1024)
+static char response_buf[MAX_RESPONSE_LEN];
+
+int basic_request(IotexHttpRequests req, const char *args) {
+
+    char url[IOTEX_EMB_MAX_URL_LEN];
+
+    if (!req_compose_url(url, sizeof(url), req)) {
+
+        return -1;
+    }
+
+    if (args) {
+
+        memcpy(url + strlen(url), args, strlen(args));
+    }
+    else {
+
+        /* Remove slash */
+        url[strlen(url) - 1] = 0;
+    }
+
+    if (req_send_request(url, response_buf, sizeof(response_buf)) != 0) {
+
+        return -1;
+    }
+
+    __INFO_MSG__(response_buf);
+    return 0;
+}
+
+
+void test_get_account_info(const char *addr) {
+
+    UNITTEST_AUTO_TRUE(basic_request(IotexReqGetAccount, addr) == 0);
+}
+
+
+void test_get_chainmeta() {
+
+    UNITTEST_AUTO_TRUE(basic_request(IotexReqGetChainMeta, NULL) == 0);
+}
+
+void test_get_transfers_by_block(const char *block) {
+
+    UNITTEST_AUTO_TRUE(basic_request(IotexReqGetTransfersByBlock, block) == 0);
+}
+
+void test_get_actions_by_hash(const char *hash) {
+
+    UNITTEST_AUTO_TRUE(basic_request(IotexReqGetActionsByHash, hash) == 0);
+}
+
+
+int main(int argc, char **argv) {
+
+    test_get_chainmeta();
+    test_get_account_info(TEST_ACCOUNT_ADDR);
+    test_get_actions_by_hash(TEST_ACTION_HASH);
+    test_get_transfers_by_block(TEST_TRANSFERS_BLOCK);
+}
