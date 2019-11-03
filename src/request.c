@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <assert.h>
 #include <curl/curl.h>
@@ -13,14 +14,13 @@
 
 
 typedef struct {
-
     uint32_t req;
     const char *paths[3];
+    const char *args_fmt;
 } iotex_st_request_conf;
 
 
 typedef struct {
-
     char *data;
     size_t len;
 } iotex_st_response_data;
@@ -30,10 +30,10 @@ typedef struct {
 static uint32_t __g_version = 1;
 
 static const iotex_st_request_conf __g_req_configs[] = {
-
     {
         IotexReqGetAccount,
-        {"accounts", NULL}
+        {"accounts", NULL},
+        "%s",
     },
 
     {
@@ -43,17 +43,20 @@ static const iotex_st_request_conf __g_req_configs[] = {
 
     {
         IotexReqGetActionsByAddr,
-        {"actions", "addr", NULL}
+        {"actions", "addr", NULL},
+        "%s?&start=%u&count=%u",
     },
 
     {
         IotexReqGetActionsByHash,
-        {"actions", "hash", NULL}
+        {"actions", "hash", NULL},
+        "%s",
     },
 
     {
         IotexReqGetTransfersByBlock,
-        {"transfers", "block", NULL}
+        {"transfers", "block", NULL},
+        "%u",
     },
 
     {
@@ -139,18 +142,22 @@ static size_t _curl_write_callback(char *ptr, size_t size, size_t nmemb, void *u
  * #url_max_size: #url buffer max size(bytes)
  * #req: IotexHttpRequests request
  * $return: successed return composed url, failed return -1
+ *
+ * TODO:
+ * 1. find a way check va_args number
  */
-char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req) {
+char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req, ...) {
 
     assert(url != NULL);
 
     int i;
+    va_list ap;
     size_t path_len;
     char *url_tail = NULL;
     const iotex_st_request_conf *conf = NULL;
 
     /* Get request config */
-    for (i = 0; __g_req_configs[i].paths != NULL; i++) {
+    for (i = 0; __g_req_configs[i].paths[0] != NULL; i++) {
 
         if (__g_req_configs[i].req == req) {
 
@@ -169,6 +176,7 @@ char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req) {
     memset(url, 0, url_max_size);
     snprintf(url, url_max_size, IOTEX_EMB_BASE_URL,  __g_version);
 
+    /* Compose request url, without args */
     for (i = 0, url_tail = url + strlen(url); conf->paths[i]; i++) {
 
         path_len = strlen(conf->paths[i]);
@@ -187,6 +195,19 @@ char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req) {
         }
     }
 
+    /* No request args */
+    if (!conf->args_fmt)  {
+
+        --url_tail;
+        *url_tail = 0;
+        return url;
+    }
+
+    /* Append post args to url */
+    va_start(ap, req);
+    vsnprintf(url_tail, url_max_size - (url_tail - url), conf->args_fmt, ap);
+    va_end(ap);
+
     return url;
 }
 
@@ -201,6 +222,8 @@ char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req) {
  * TODO:
  * 1. add meaningful error code
  * 2. certs path and info configurable
+ * 3. certs path and info auto search
+ * 4. add zero copy version ? (don't forget release response)
  */
 int req_send_request(const char *request, char *response, size_t response_max_size) {
 

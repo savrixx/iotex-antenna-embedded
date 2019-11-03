@@ -4,11 +4,13 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 
 #define UNITTEST_ASSERT_EQ(a,b)	(assert((a) == (b)))
 #define UNITTEST_ASSERT_NE(a,b)	(assert((a) != (b)))
 #define UNITTEST_ASSERT_GT(a,b) (assert((a) > (b)))
 #define UNITTEST_ASSERT_LT(a,b) (assert((a) < (b)))
+#define UNITTEST_ASSERT_STR_EQ(a, b, l) (assert(memcmp(a, b, l) == 0))
 
 #define UNITTEST_GET_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 

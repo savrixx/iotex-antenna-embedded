@@ -27,7 +27,7 @@ typedef enum {
 
 
 
-char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req);
+char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req, ...);
 int req_send_request(const char *request, char *response, size_t response_max_size);
 
 #ifdef __cplusplus
