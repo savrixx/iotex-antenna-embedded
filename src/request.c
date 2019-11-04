@@ -141,7 +141,7 @@ static size_t _curl_write_callback(char *ptr, size_t size, size_t nmemb, void *u
  * #url: buffer to save composed url
  * #url_max_size: #url buffer max size(bytes)
  * #req: IotexHttpRequests request
- * $return: successed return composed url, failed return -1
+ * $return: successed return composed url, failed return NULL
  *
  * TODO:
  * 1. find a way check va_args number
@@ -190,7 +190,7 @@ char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req, ...
         }
         else {
 
-            __WARN_MSG__("url too short!");
+            __WARN_MSG__("url buffer too short!");
             return NULL;
         }
     }
@@ -224,6 +224,7 @@ char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req, ...
  * 2. certs path and info configurable
  * 3. certs path and info auto search
  * 4. add zero copy version ? (don't forget release response)
+ * 5. add two-way authentication support
  */
 int req_send_request(const char *request, char *response, size_t response_max_size) {
 
