@@ -1,7 +1,12 @@
 #ifndef _IOTEX_EMB_RESPONSE_H_
 #define _IOTEX_EMB_RESPONSE_H_
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
+#include <stddef.h>
 
 typedef enum {
     IOTEX_RES_TYPE_STR,
@@ -14,6 +19,7 @@ typedef enum {
 } IotexHttpResponseDataType;
 
 
+/* Descript json hierarchy and data type */
 typedef struct _json_parse_rule {
     const char *key;
     IotexHttpResponseDataType type;
@@ -24,6 +30,12 @@ typedef struct _json_parse_rule {
         float *f_value;
         uint64_t *u_value;
     } value;
+    size_t value_len;
 } json_parse_rule;
+
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif /* _IOTEX_EMB_RESPONSE_H_ */

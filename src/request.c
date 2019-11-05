@@ -263,7 +263,7 @@ int req_send_request(const char *request, char *response, size_t response_max_si
         return -1;
     }
 
-    if (res.len + 1> response_max_size) {
+    if (res.len + 1 > response_max_size) {
 
         _free_response_data(&res);
         curl_easy_cleanup(curl);

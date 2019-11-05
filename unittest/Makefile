@@ -29,6 +29,9 @@ $(TARGETS):
 	$(CC) $(CFLAGS) -o $(OBJDIR)/$@ $^ $(LDFLAGS)
 
 
+# Test
+json_parse_test: json_parse_test.o
+
 # Unittest 
 basic_get_test: basic_get_test.o
 compose_url_test: compose_url_test.o
