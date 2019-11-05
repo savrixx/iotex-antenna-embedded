@@ -110,7 +110,7 @@ static size_t _curl_write_callback(char *ptr, size_t size, size_t nmemb, void *u
 
         res->data = 0;
 
-        if (!(res->data = malloc(new_len + 1)))  {
+        if (!(res->data = malloc(new_len)))  {
 
             __ERROR_MSG__("malloc");
             return 0;
@@ -118,7 +118,7 @@ static size_t _curl_write_callback(char *ptr, size_t size, size_t nmemb, void *u
     }
     else {
 
-        if (!(new_ptr = realloc(res->data, res->len + new_len + 1))) {
+        if (!(new_ptr = realloc(res->data, res->len + new_len))) {
 
             __ERROR_MSG__("realloc");
             _free_response_data(res);
@@ -131,7 +131,6 @@ static size_t _curl_write_callback(char *ptr, size_t size, size_t nmemb, void *u
     /* Append new data to response data */
     memcpy(res->data + res->len, ptr, new_len);
     res->len += new_len;
-    res->data[res->len] = 0;
     return new_len;
 }
 
@@ -264,7 +263,7 @@ int req_send_request(const char *request, char *response, size_t response_max_si
         return -1;
     }
 
-    if (res.len > response_max_size) {
+    if (res.len + 1> response_max_size) {
 
         _free_response_data(&res);
         curl_easy_cleanup(curl);
@@ -273,6 +272,8 @@ int req_send_request(const char *request, char *response, size_t response_max_si
 
     /* Copy data to response */
     memcpy(response, res.data, res.len);
+    response[res.len] = 0;
+
     _free_response_data(&res);
     curl_easy_cleanup(curl);
     return 0;
