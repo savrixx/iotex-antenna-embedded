@@ -1,7 +1,7 @@
 AR		= $(CROSS_COMPILE)ar
 CC		= $(CROSS_COMPILE)gcc
 CXX		= $(CROSS_COMPILE)g++
-CFLAGS		= -Wall -g -fPIC -D_DEBUG_JSON_PARSE_
+CFLAGS	= -Wall -g -fPIC -D_DEBUG_JSON_PARSE_
 CXXFLAGS	= -Wall -g -fPIC -D_DEBUG_JSON_PARSE_
 LDSHFLAGS	= -rdynamic -shared -fPIC
 ARFLAGS		= rcv

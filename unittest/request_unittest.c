@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "config.h"
 #include "unittest.h"
 #include "../src/debug.h"
@@ -17,6 +18,8 @@ int basic_request(IotexHttpRequests req, const char *args) {
 
         return -1;
     }
+
+    __INFO_MSG__(url);
 
     if (req_send_request(url, response_buf, sizeof(response_buf)) != 0) {
 
@@ -41,7 +44,24 @@ void test_get_chainmeta() {
 
 void test_get_transfers_by_block(const char *block) {
 
-    UNITTEST_AUTO_TRUE(basic_request(IotexReqGetTransfersByBlock, block) == 0);
+    char url[IOTEX_EMB_MAX_URL_LEN];
+
+    if (!req_compose_url(url, sizeof(url), IotexReqGetTransfersByBlock, atoi(block))) {
+
+        UNITTEST_FAIL("req_compose_url");
+        return;
+    }
+
+    __INFO_MSG__(url);
+
+    if (req_send_request(url, response_buf, sizeof(response_buf)) != 0) {
+
+        UNITTEST_FAIL("req_send_request");
+        return;
+    }
+
+    __INFO_MSG__(response_buf);
+    UNITTEST_AUTO_PASS();
 }
 
 void test_get_actions_by_hash(const char *hash) {
@@ -58,6 +78,8 @@ void test_get_actions_by_addr(const char *addr, uint32_t start, uint32_t count) 
         UNITTEST_FAIL("req_compose_url");
         return;
     }
+
+    __INFO_MSG__(url);
 
     if (req_send_request(url, response_buf, sizeof(response_buf)) != 0) {
 
