@@ -25,7 +25,7 @@ clean:
 	$(RM) *.o a.out depend.d $(TARGETS) $(OBJDIR) -rf
 
 $(TARGETS):
-	@make objdir
+	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -o $(OBJDIR)/$@ $^ $(LDFLAGS)
 
 

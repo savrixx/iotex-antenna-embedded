@@ -84,6 +84,12 @@ static int json_parse_object(const char *json, jsmntok_t *tok, size_t tok_count,
 
                                 return -1;
                             }
+                            else {
+
+                                /* Move to next token */
+                                i += tok[1].size + 2;
+                                tok += tok[1].size + 2;
+                            }
                         }
 
                         break;
