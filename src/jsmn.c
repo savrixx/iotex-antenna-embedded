@@ -1,6 +1,12 @@
+#include <stdlib.h>
+#include <string.h>
+
 #include "jsmn.h"
 #include "debug.h"
 #include "response.h"
+
+
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
@@ -11,6 +17,7 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 
     return -1;
 }
+
 
 /*
  * @brief: parse json object according to json_parse_rule
@@ -37,41 +44,62 @@ static int json_parse_object(const char *json, jsmntok_t *tok, size_t tok_count,
 
 
 #ifdef _DEBUG_JSON_PARSE_
-                fprintf(stdout, "%s: %.*s\n", rule->key, tok[1].end - tok[1].start, json + tok[1].start);
+                fprintf(stdout, "R%d, T%d %s: %.*s\n", rule->type, tok[1].type, rule->key, tok[1].end - tok[1].start, json + tok[1].start);
 #endif
 
                 switch (rule->type) {
                     case IOTEX_RES_TYPE_STR:
-                        if (tok[1].type == JSMN_STRING && rule->value.c_value && rule->value_len) {
+                        if (tok[1].type == JSMN_STRING && rule->value && rule->value_len) {
 
+                            memset(rule->value, 0, rule->value_len);
+                            memcpy(rule->value, json + tok[1].start, MIN(rule->value_len, tok[1].end - tok[1].start));
                         }
 
-                        break;
-
-                    case IOTEX_RES_TYPE_BOOL:
                         break;
 
                     case IOTEX_RES_TYPE_TIME:
                         break;
 
                     case IOTEX_RES_TYPE_ARRAY:
+                        if (tok[1].type == JSMN_ARRAY && rule->value && rule->value_len) {
+
+                        }
+
                         break;
 
-                    case IOTEX_RES_TYPE_FLOAT:
+                    case IOTEX_RES_TYPE_DOUBLE:
+                        if (tok[1].type == JSMN_PRIMITIVE && rule->value) {
+
+                            char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
+                            *(double *)(rule->value) = atof(value);
+                            free(value);
+                        }
+
                         break;
 
                     case IOTEX_RES_TYPE_STRUCT:
                         if (tok[1].type == JSMN_OBJECT && rule->sub) {
 
-                            return json_parse_object(json, tok + 2, tok_count - i - 2, rule->sub);
+                            if (json_parse_object(json, tok + 2, tok_count - i - 2, rule->sub) != 0) {
+
+                                return -1;
+                            }
                         }
 
                         break;
 
                     case IOTEX_RES_TYPE_INTEGER:
+                        if ((tok[1].type == JSMN_STRING || tok[i].type == JSMN_PRIMITIVE) && rule->value) {
+
+                            char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
+                            *(int64_t *)(rule->value) = atoll(value);
+                            free(value);
+                        }
+
                         break;
 
                     default:
+                        fprintf(stderr, "Key: %s, unknown data type[%d]\n", rule->key, rule->type);
                         break;
                 }
             }
