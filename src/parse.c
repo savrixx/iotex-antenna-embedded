@@ -3,7 +3,7 @@
 
 #include "jsmn.h"
 #include "debug.h"
-#include "response.h"
+#include "parse.h"
 
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -48,7 +48,7 @@ static int json_parse_object(const char *json, jsmntok_t *tok, size_t tok_count,
 #endif
 
                 switch (rule->type) {
-                    case IOTEX_RES_TYPE_STR:
+                    case JSON_TYPE_STR:
                         if (tok[1].type == JSMN_STRING && rule->value && rule->value_len) {
 
                             memset(rule->value, 0, rule->value_len);
@@ -57,17 +57,17 @@ static int json_parse_object(const char *json, jsmntok_t *tok, size_t tok_count,
 
                         break;
 
-                    case IOTEX_RES_TYPE_TIME:
+                    case JSON_TYPE_TIME:
                         break;
 
-                    case IOTEX_RES_TYPE_ARRAY:
+                    case JSON_TYPE_ARRAY:
                         if (tok[1].type == JSMN_ARRAY && rule->value && rule->value_len) {
 
                         }
 
                         break;
 
-                    case IOTEX_RES_TYPE_DOUBLE:
+                    case JSON_TYPE_DOUBLE:
                         if (tok[1].type == JSMN_PRIMITIVE && rule->value) {
 
                             char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
@@ -77,7 +77,7 @@ static int json_parse_object(const char *json, jsmntok_t *tok, size_t tok_count,
 
                         break;
 
-                    case IOTEX_RES_TYPE_STRUCT:
+                    case JSON_TYPE_OBJECT:
                         if (tok[1].type == JSMN_OBJECT && rule->sub) {
 
                             if (json_parse_object(json, tok + 2, tok_count - i - 2, rule->sub) != 0) {
@@ -94,7 +94,7 @@ static int json_parse_object(const char *json, jsmntok_t *tok, size_t tok_count,
 
                         break;
 
-                    case IOTEX_RES_TYPE_INTEGER:
+                    case JSON_TYPE_INT32:
                         if ((tok[1].type == JSMN_STRING || tok[i].type == JSMN_PRIMITIVE) && rule->value) {
 
                             char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);

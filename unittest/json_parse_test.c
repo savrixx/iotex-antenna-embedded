@@ -2,9 +2,9 @@
 #include "debug.h"
 #include "config.h"
 #include "unittest.h"
-#include "../src/request.h"
-#include "../src/response.h"
 #include "test_config.h"
+#include "../src/parse.h"
+#include "../src/request.h"
 
 char addr[128];
 double chain_tps;
@@ -13,23 +13,23 @@ int64_t chain_height;
 static json_parse_rule account_meta[] = {
 
     {
-        "address", IOTEX_RES_TYPE_STR, NULL, addr, 128
+        "address", JSON_TYPE_STR, NULL, addr, 128
     },
 
     {
-        "balance", IOTEX_RES_TYPE_INTEGER,
+        "balance", JSON_TYPE_INT32,
     },
 
     {
-        "nonce", IOTEX_RES_TYPE_INTEGER
+        "nonce", JSON_TYPE_INT32
     },
 
     {
-        "pendingNonce", IOTEX_RES_TYPE_INTEGER
+        "pendingNonce", JSON_TYPE_INT32
     },
 
     {
-        "numActions", IOTEX_RES_TYPE_INTEGER
+        "numActions", JSON_TYPE_INT32
     },
 };
 
@@ -37,7 +37,7 @@ static json_parse_rule account_meta[] = {
 static json_parse_rule account_rules[] = {
 
     {
-        "accountMeta", IOTEX_RES_TYPE_STRUCT, account_meta
+        "accountMeta", JSON_TYPE_OBJECT, account_meta
     },
 
     {
@@ -49,15 +49,15 @@ static json_parse_rule account_rules[] = {
 static json_parse_rule epochs_rules[] = {
 
     {
-        "num", IOTEX_RES_TYPE_INTEGER,
+        "num", JSON_TYPE_INT32,
     },
 
     {
-        "height", IOTEX_RES_TYPE_INTEGER, NULL, (void *) &chain_height
+        "height", JSON_TYPE_INT32, NULL, (void *) &chain_height
     },
 
     {
-        "gravityChainStartHeight", IOTEX_RES_TYPE_INTEGER,
+        "gravityChainStartHeight", JSON_TYPE_INT32,
     },
 
     {
@@ -69,23 +69,23 @@ static json_parse_rule epochs_rules[] = {
 static json_parse_rule chain_meta_rule[] = {
 
     {
-        "height", IOTEX_RES_TYPE_INTEGER,
+        "height", JSON_TYPE_INT32,
     },
 
     {
-        "numActions", IOTEX_RES_TYPE_INTEGER,
+        "numActions", JSON_TYPE_INT32,
     },
 
     {
-        "tps", IOTEX_RES_TYPE_INTEGER,
+        "tps", JSON_TYPE_INT32,
     },
 
     {
-        "epoch", IOTEX_RES_TYPE_STRUCT, epochs_rules
+        "epoch", JSON_TYPE_OBJECT, epochs_rules
     },
 
     {
-        "tpsFloat", IOTEX_RES_TYPE_DOUBLE, NULL, (void *) &chain_tps
+        "tpsFloat", JSON_TYPE_DOUBLE, NULL, (void *) &chain_tps
     },
 
     {
@@ -93,9 +93,6 @@ static json_parse_rule chain_meta_rule[] = {
     }
 };
 
-
-/* json.c */
-int json_parse_response(const char *response, json_parse_rule *rules);
 
 
 int json_parse_chain_meta() {
