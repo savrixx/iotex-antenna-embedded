@@ -8,14 +8,14 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 
+
 typedef enum {
     JSON_TYPE_STR,
     JSON_TYPE_TIME,
     JSON_TYPE_ARRAY,
     JSON_TYPE_DOUBLE,
     JSON_TYPE_OBJECT,
-    JSON_TYPE_INT32,
-    JSON_TYPE_INT64,
+    JSON_TYPE_NUMBER,
 } json_datatype;
 
 

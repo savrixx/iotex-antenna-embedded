@@ -12,7 +12,7 @@ OBJDIR=../objs
 SCRIPTS=../scripts
 TARGETS=$(foreach src, $(SRCS), $(basename $(src)))
 
-.PHONY:all clean objdir test
+.PHONY:all clean objdir test no_int128
 .SILENT:clean
 
 all:objdir $(TARGETS)
@@ -28,11 +28,14 @@ $(TARGETS):
 	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -o $(OBJDIR)/$@ $^ $(LDFLAGS)
 
+no_int128:
+	@make clean && make CFLAGS="-Wall -g -fPIC -I../src -D_NO_128INT_"
 
 # Test
 json_parse_test: json_parse_test.o
 
 # Unittest 
+u128_unittest: u128_unittest.o
 basic_get_test: basic_get_test.o
 compose_url_test: compose_url_test.o
 request_unittest: request_unittest.o

@@ -15,7 +15,7 @@ TARGETS = libiotexemb.a libiotexemb.so
 SCRIPTS=scripts
 UNITTEST=unittest
 
-.PHONY:all clean distclean test install help style statistics
+.PHONY:all clean distclean test install help style statistics no_int128
 .SILENT: clean
 
 all:$(TARGETS)
@@ -33,6 +33,9 @@ test:libiotexemb.so
 
 unittest:test
 	make -C $(SCRIPTS)
+
+no_int128:
+	@make clean && make CFLAGS="-Wall -g -fPIC -D_DEBUG_JSON_PARSE_ -D_NO_128INT_"
 
 style:
 	@find -regex '.*/.*\.\(c\|cpp\|h\)$$' | xargs $(CODE_STYLE)

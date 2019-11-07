@@ -10,6 +10,9 @@ extern "C" {
 #define IOTEX_EMB_BASE_URL "https://pharos.iotex.io/v%d/"
 #define IOTEX_EMB_MAX_URL_LEN 256
 
+/* Response */
+#define IOTEX_EBM_MAX_RES_LEN 16 * 1024
+
 /* Certs */
 #define DEF_CA_INFO "/etc/ssl/certs/ca-certificates.crt"
 #define DEF_CA_PATH "/etc/ssl/certs"

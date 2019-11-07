@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "u128.h"
 #include "jsmn.h"
 #include "debug.h"
 #include "parse.h"
@@ -94,11 +95,11 @@ static int json_parse_object(const char *json, jsmntok_t *tok, size_t tok_count,
 
                         break;
 
-                    case JSON_TYPE_INT32:
+                    case JSON_TYPE_NUMBER:
                         if ((tok[1].type == JSMN_STRING || tok[i].type == JSMN_PRIMITIVE) && rule->value) {
 
                             char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
-                            *(int64_t *)(rule->value) = atoll(value);
+                            str2u128(value, (uint128_t *)(rule->value));
                             free(value);
                         }
 
