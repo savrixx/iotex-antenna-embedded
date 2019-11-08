@@ -1,0 +1,67 @@
+#include "parse.h"
+#include "debug.h"
+#include "config.h"
+#include "request.h"
+#include "response.h"
+#include "iotex_emb.h"
+
+
+int iotex_emb_get_chainemeta(iotex_st_chain_meta *chain) {
+
+    json_parse_rule epochs_rules[] = {
+
+        {"num", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.num},
+        {"height", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.height},
+        {"gravityChainStartHeight", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.gravityChainStartHeight},
+        {NULL}
+    };
+
+    json_parse_rule chain_meta_rules[] = {
+
+        {"height", JSON_TYPE_NUMBER, NULL, (void *) &chain->height},
+        {"numActions", JSON_TYPE_NUMBER, NULL, (void *) &chain->numActions},
+        {"tps", JSON_TYPE_NUMBER, NULL, (void *) &chain->tps},
+        {"epoch", JSON_TYPE_OBJECT, epochs_rules},
+        {"tpsFloat", JSON_TYPE_DOUBLE, NULL, (void *) &chain->tpsFloat},
+        {NULL,}
+    };
+
+    char url[IOTEX_EMB_MAX_URL_LEN];
+
+    if (!req_compose_url(url, sizeof(url), REQ_GET_CHAINMETA)) {
+
+        __WARN_MSG__("compose url failed!");
+        return -1;
+    }
+
+    return res_get_data(url, chain_meta_rules);
+}
+
+
+int iotex_emb_get_accountmeta(const char *account, iotex_st_account_meta *meta) {
+
+    json_parse_rule account_meta[] = {
+
+        {"address", JSON_TYPE_STR, NULL, (void *) &meta->address, sizeof(meta->address)},
+        {"balance", JSON_TYPE_NUMBER, NULL, (void *) &meta->balance},
+        {"nonce", JSON_TYPE_NUMBER, NULL, (void *) &meta->nonce},
+        {"pendingNonce", JSON_TYPE_NUMBER, NULL, (void *) &meta->pendingNonce},
+        {"numActions", JSON_TYPE_NUMBER, NULL, (void *) &meta->numActions},
+        {NULL}
+    };
+
+    json_parse_rule account_rules[] = {
+        {"accountMeta", JSON_TYPE_OBJECT, account_meta},
+        {NULL}
+    };
+
+    char url[IOTEX_EMB_MAX_URL_LEN];
+
+    if (!req_compose_url(url, sizeof(url), REQ_GET_ACCOUNT, account)) {
+
+        __WARN_MSG__("compose url failed!");
+        return -1;
+    }
+
+    return res_get_data(url, account_rules);
+}

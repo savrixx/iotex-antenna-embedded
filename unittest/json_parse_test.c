@@ -3,155 +3,33 @@
 #include "config.h"
 #include "unittest.h"
 #include "test_config.h"
+#include "../src/u128.h"
 #include "../src/parse.h"
 #include "../src/request.h"
-
-char addr[128];
-double chain_tps;
-int64_t chain_height;
-
-static json_parse_rule account_meta[] = {
-
-    {
-        "address", JSON_TYPE_STR, NULL, addr, 128
-    },
-
-    {
-        "balance", JSON_TYPE_INT32,
-    },
-
-    {
-        "nonce", JSON_TYPE_INT32
-    },
-
-    {
-        "pendingNonce", JSON_TYPE_INT32
-    },
-
-    {
-        "numActions", JSON_TYPE_INT32
-    },
-};
+#include "../src/iotex_emb.h"
 
 
-static json_parse_rule account_rules[] = {
+void json_parse_chain_meta() {
 
-    {
-        "accountMeta", JSON_TYPE_OBJECT, account_meta
-    },
-
-    {
-        NULL
-    },
-};
-
-
-static json_parse_rule epochs_rules[] = {
-
-    {
-        "num", JSON_TYPE_INT32,
-    },
-
-    {
-        "height", JSON_TYPE_INT32, NULL, (void *) &chain_height
-    },
-
-    {
-        "gravityChainStartHeight", JSON_TYPE_INT32,
-    },
-
-    {
-        NULL
-    }
-};
-
-
-static json_parse_rule chain_meta_rule[] = {
-
-    {
-        "height", JSON_TYPE_INT32,
-    },
-
-    {
-        "numActions", JSON_TYPE_INT32,
-    },
-
-    {
-        "tps", JSON_TYPE_INT32,
-    },
-
-    {
-        "epoch", JSON_TYPE_OBJECT, epochs_rules
-    },
-
-    {
-        "tpsFloat", JSON_TYPE_DOUBLE, NULL, (void *) &chain_tps
-    },
-
-    {
-        NULL,
-    }
-};
-
-
-
-int json_parse_chain_meta() {
-
-    char response[1024];
-    char url[IOTEX_EMB_MAX_URL_LEN];
-
-    if (!req_compose_url(url, sizeof(url), IotexReqGetChainMeta)) {
-
-        __WARN_MSG__("compose url failed!");
-        return -1;
-    }
-
-    if (req_send_request(url, response, sizeof(response)) != 0) {
-
-        __WARN_MSG__("send request failed!");
-        return -1;
-    }
-
-    if (json_parse_response(response, chain_meta_rule) != 0) {
-
-        fprintf(stdout, "[%zu], %s\n", strlen(response), response);
-        return -1;
-    }
-    else {
-
-        fprintf(stdout, "Chain height: %ld, tps: %f\n", chain_height, chain_tps);
-    }
-
-    return 0;
+    iotex_st_chain_meta chainmeta;
+    UNITTEST_AUTO_TRUE(iotex_emb_get_chainemeta(&chainmeta) == 0);
 }
 
 
-int json_parse_account_meta() {
+void json_parse_account_meta() {
 
-    char response[1024];
-    char url[IOTEX_EMB_MAX_URL_LEN];
+    iotex_st_account_meta account;
 
-    if (!req_compose_url(url, sizeof(url), IotexReqGetAccount, TEST_ACCOUNT_ADDR)) {
+    UNITTEST_ASSERT_EQ(0, iotex_emb_get_accountmeta(TEST_ACCOUNT_ADDR, &account));
 
-        __WARN_MSG__("compose url failed!");
-        return -1;
-    }
+    u128_print(account.balance);
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("29"), account.nonce));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("42"), account.numActions));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("30"), account.pendingNonce));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("8703350000000000000000"), account.balance));
+    UNITTEST_ASSERT_STR_EQ(account.address, TEST_ACCOUNT_ADDR, strlen(TEST_ACCOUNT_ADDR));
 
-    if (req_send_request(url, response, sizeof(response)) != 0) {
-
-        __WARN_MSG__("send request failed!");
-        return -1;
-    }
-
-    if (json_parse_response(response, account_rules) != 0) {
-
-        fprintf(stdout, "[%zu], %s\n", strlen(response), response);
-        return -1;
-    }
-
-    UNITTEST_ASSERT_STR_EQ(addr, TEST_ACCOUNT_ADDR, strlen(TEST_ACCOUNT_ADDR));
     UNITTEST_AUTO_PASS();
-    return 0;
 }
 
 
