@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include "config.h"
 #include "unittest.h"
+#include "test_config.h"
 #include "../src/debug.h"
 #include "../src/request.h"
-#include "test_config.h"
 
 
 #define MAX_RESPONSE_LEN (16 * 1024)
 static char response_buf[MAX_RESPONSE_LEN];
 
-int basic_request(IotexHttpRequests req, const char *args) {
+int basic_request(iotex_em_request req, const char *args) {
 
     char url[IOTEX_EMB_MAX_URL_LEN];
 
@@ -33,20 +33,20 @@ int basic_request(IotexHttpRequests req, const char *args) {
 
 void test_get_account_info(const char *addr) {
 
-    UNITTEST_AUTO_TRUE(basic_request(IotexReqGetAccount, addr) == 0);
+    UNITTEST_AUTO_TRUE(basic_request(REQ_GET_ACCOUNT, addr) == 0);
 }
 
 
 void test_get_chainmeta() {
 
-    UNITTEST_AUTO_TRUE(basic_request(IotexReqGetChainMeta, NULL) == 0);
+    UNITTEST_AUTO_TRUE(basic_request(REQ_GET_CHAINMETA, NULL) == 0);
 }
 
 void test_get_transfers_by_block(const char *block) {
 
     char url[IOTEX_EMB_MAX_URL_LEN];
 
-    if (!req_compose_url(url, sizeof(url), IotexReqGetTransfersByBlock, atoi(block))) {
+    if (!req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, atoi(block))) {
 
         UNITTEST_FAIL("req_compose_url");
         return;
@@ -66,14 +66,14 @@ void test_get_transfers_by_block(const char *block) {
 
 void test_get_actions_by_hash(const char *hash) {
 
-    UNITTEST_AUTO_TRUE(basic_request(IotexReqGetActionsByHash, hash) == 0);
+    UNITTEST_AUTO_TRUE(basic_request(REQ_GET_ACTIONS_BY_HASH, hash) == 0);
 }
 
 void test_get_actions_by_addr(const char *addr, uint32_t start, uint32_t count) {
 
     char url[IOTEX_EMB_MAX_URL_LEN];
 
-    if (!req_compose_url(url, sizeof(url), IotexReqGetActionsByAddr, addr, start, count)) {
+    if (!req_compose_url(url, sizeof(url), REQ_GET_ACTIONS_BY_ADDR, addr, start, count)) {
 
         UNITTEST_FAIL("req_compose_url");
         return;

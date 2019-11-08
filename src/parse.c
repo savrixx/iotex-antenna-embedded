@@ -41,75 +41,78 @@ static int json_parse_object(const char *json, jsmntok_t *tok, size_t tok_count,
 
         for (rule = rules; rule && rule->key; rule++) {
 
-            if (jsoneq(json, tok, rule->key) == 0) {
+            if (jsoneq(json, tok, rule->key) != 0) {
+
+                continue;
+            }
 
 
 #ifdef _DEBUG_JSON_PARSE_
-                fprintf(stdout, "R%d, T%d %s: %.*s\n", rule->type, tok[1].type, rule->key, tok[1].end - tok[1].start, json + tok[1].start);
+            fprintf(stdout, "R%d, T%d %s: %.*s\n", rule->type, tok[1].type, rule->key, tok[1].end - tok[1].start, json + tok[1].start);
 #endif
 
-                switch (rule->type) {
-                    case JSON_TYPE_STR:
-                        if (tok[1].type == JSMN_STRING && rule->value && rule->value_len) {
+            switch (rule->type) {
+                case JSON_TYPE_STR:
+                    if (tok[1].type == JSMN_STRING && rule->value && rule->value_len) {
 
-                            memset(rule->value, 0, rule->value_len);
-                            memcpy(rule->value, json + tok[1].start, MIN(rule->value_len, tok[1].end - tok[1].start));
+                        memset(rule->value, 0, rule->value_len);
+                        memcpy(rule->value, json + tok[1].start, MIN(rule->value_len, tok[1].end - tok[1].start));
+                    }
+
+                    break;
+
+                case JSON_TYPE_TIME:
+                    break;
+
+                case JSON_TYPE_ARRAY:
+                    if (tok[1].type == JSMN_ARRAY && rule->value && rule->value_len) {
+
+                    }
+
+                    break;
+
+                case JSON_TYPE_DOUBLE:
+                    if (tok[1].type == JSMN_PRIMITIVE && rule->value) {
+
+                        char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
+                        *(double *)(rule->value) = atof(value);
+                        free(value);
+                    }
+
+                    break;
+
+                case JSON_TYPE_OBJECT:
+                    if (tok[1].type == JSMN_OBJECT && rule->sub) {
+
+                        if (json_parse_object(json, tok + 2, tok_count - i - 2, rule->sub) != 0) {
+
+                            return -1;
                         }
+                        else {
 
-                        break;
-
-                    case JSON_TYPE_TIME:
-                        break;
-
-                    case JSON_TYPE_ARRAY:
-                        if (tok[1].type == JSMN_ARRAY && rule->value && rule->value_len) {
-
+                            /* Move to next token */
+                            i += tok[1].size + 2;
+                            tok += tok[1].size + 2;
                         }
+                    }
 
-                        break;
+                    break;
 
-                    case JSON_TYPE_DOUBLE:
-                        if (tok[1].type == JSMN_PRIMITIVE && rule->value) {
+                case JSON_TYPE_NUMBER:
+                    if ((tok[1].type == JSMN_STRING || tok[i].type == JSMN_PRIMITIVE) && rule->value) {
 
-                            char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
-                            *(double *)(rule->value) = atof(value);
-                            free(value);
-                        }
+                        char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
+                        str2u128(value, (uint128_t *)(rule->value));
+                        free(value);
+                    }
 
-                        break;
+                    break;
 
-                    case JSON_TYPE_OBJECT:
-                        if (tok[1].type == JSMN_OBJECT && rule->sub) {
+                default:
+                    fprintf(stderr, "Key: %s, unknown data type[%d]\n", rule->key, rule->type);
+                    break;
 
-                            if (json_parse_object(json, tok + 2, tok_count - i - 2, rule->sub) != 0) {
-
-                                return -1;
-                            }
-                            else {
-
-                                /* Move to next token */
-                                i += tok[1].size + 2;
-                                tok += tok[1].size + 2;
-                            }
-                        }
-
-                        break;
-
-                    case JSON_TYPE_NUMBER:
-                        if ((tok[1].type == JSMN_STRING || tok[i].type == JSMN_PRIMITIVE) && rule->value) {
-
-                            char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
-                            str2u128(value, (uint128_t *)(rule->value));
-                            free(value);
-                        }
-
-                        break;
-
-                    default:
-                        fprintf(stderr, "Key: %s, unknown data type[%d]\n", rule->key, rule->type);
-                        break;
-                }
-            }
+            } /* end of switch */
         }
 
         i++;

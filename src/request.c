@@ -31,51 +31,51 @@ static uint32_t __g_version = 1;
 
 static const iotex_st_request_conf __g_req_configs[] = {
     {
-        IotexReqGetAccount,
+        REQ_GET_ACCOUNT,
         {"accounts", NULL},
         "%s",
     },
 
     {
-        IotexReqGetChainMeta,
+        REQ_GET_CHAINMETA,
         {"chainmeta", NULL}
     },
 
     {
-        IotexReqGetActionsByAddr,
+        REQ_GET_ACTIONS_BY_ADDR,
         {"actions", "addr", NULL},
         "%s?&start=%u&count=%u",
     },
 
     {
-        IotexReqGetActionsByHash,
+        REQ_GET_ACTIONS_BY_HASH,
         {"actions", "hash", NULL},
         "%s",
     },
 
     {
-        IotexReqGetTransfersByBlock,
+        REQ_GET_TRANSFERS_BY_BLOCK,
         {"transfers", "block", NULL},
         "%u",
     },
 
     {
-        IotexReqGetMemberValidators,
+        REQ_GET_MEMBER_VALIDATORS,
         {"staking", "validators", NULL}
     },
 
     {
-        IotexReqGetMemberDelegations,
+        REQ_GET_MEMBER_DELEGATIONS,
         {"staking", "delegations", NULL}
     },
 
     {
-        IotexReqSendSignedActionBytes,
+        REQ_SEND_SINGLE_ACTION_BYTES,
         {"actionbytes", "signedbytes", NULL}
     },
 
     {
-        IotexReqTail, {NULL}
+        REQ_TAIL_NONE, {NULL}
     }
 };
 
@@ -145,7 +145,7 @@ static size_t _curl_write_callback(char *ptr, size_t size, size_t nmemb, void *u
  * TODO:
  * 1. find a way check va_args number
  */
-char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req, ...) {
+char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...) {
 
     assert(url != NULL);
 

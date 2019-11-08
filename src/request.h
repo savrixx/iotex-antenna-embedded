@@ -9,25 +9,24 @@ extern "C" {
 
 typedef enum {
 
-    IotexReqGetAccount,
-    IotexReqGetChainMeta,
-    IotexReqGetTransfersByBlock,
+    REQ_GET_ACCOUNT,
+    REQ_GET_CHAINMETA,
+    REQ_GET_TRANSFERS_BY_BLOCK,
 
-    IotexReqGetActionsByHash,
-    IotexReqGetActionsByAddr,
+    REQ_GET_ACTIONS_BY_HASH,
+    REQ_GET_ACTIONS_BY_ADDR,
 
-    IotexReqGetMemberValidators,
-    IotexReqGetMemberDelegations,
+    REQ_GET_MEMBER_VALIDATORS,
+    REQ_GET_MEMBER_DELEGATIONS,
 
-    IotexReqSendSignedActionBytes,
+    REQ_SEND_SINGLE_ACTION_BYTES,
 
-
-    IotexReqTail
-} IotexHttpRequests;
-
+    REQ_TAIL_NONE
+} iotex_em_request;
 
 
-char *req_compose_url(char *url, size_t url_max_size, IotexHttpRequests req, ...);
+
+char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...);
 int req_send_request(const char *request, char *response, size_t response_max_size);
 
 #ifdef __cplusplus
