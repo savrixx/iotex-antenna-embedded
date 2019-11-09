@@ -17,6 +17,11 @@ extern "C" {
 #define DEF_CA_INFO "/etc/ssl/certs/ca-certificates.crt"
 #define DEF_CA_PATH "/etc/ssl/certs"
 
+/* Data type length */
+#define IOTEX_EMB_LIMIT_ACCOUNT_LEN 42
+#define IOTEX_EMB_LIMIT_TIME_LEN 21
+#define IOTEX_EMB_LIMIT_HASH_LEN 65
+#define IOTEX_EMB_LIMIT_KEY_LEN 89
 
 #ifdef __cplusplus
 }
