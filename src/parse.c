@@ -21,6 +21,35 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
     return -1;
 }
 
+#ifdef _DEBUG_JSON_PARSE_
+static const char *jsmn_type_str(jsmntype_t type) {
+
+    static const char *__g_jsmn_type_str[] = {"UNDEFINED", "OBJECT", "ARRAY", "STRING", "PRIMITIVE"};
+
+    if (type >= 0 && type < sizeof(__g_jsmn_type_str) / sizeof(__g_jsmn_type_str[0])) {
+
+        return __g_jsmn_type_str[type];
+    }
+    else {
+
+        return "Unknown type";
+    }
+}
+
+static const char *json_type_str(json_datatype type) {
+
+    static const char *__g_json_type_str[] = {"Undefined", "String", "Time", "Array", "Double", "Object", "Number"};
+
+    if (type >= 0 && type < sizeof(__g_json_type_str) / sizeof(__g_json_type_str[0])) {
+
+        return __g_json_type_str[type];
+    }
+    else {
+
+        return "Unknown type";
+    }
+}
+#endif
 
 /*
  * @brief: parse json object according to json_parse_rule and save data to struct
@@ -52,7 +81,8 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
             }
 
 #ifdef _DEBUG_JSON_PARSE_
-            fprintf(stdout, "R%d, T%d %s: %.*s\n", rule->type, tok[1].type, rule->key, tok[1].end - tok[1].start, json + tok[1].start);
+            fprintf(stdout, "\t[%s, %s] %s: %.*s\n", \
+                    jsmn_type_str(tok[1].type), json_type_str(rule->type), rule->key, tok[1].end - tok[1].start, json + tok[1].start);
 #endif
 
             switch (rule->type) {
@@ -77,9 +107,8 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
                         }
                         else {
 
-                            /* Move to next token */
-                            i += ret + 2;
-                            tok += ret + 2;
+                            i += ret + 1;
+                            tok += ret + 1;
                             processed_tok += ret + 2;
                         }
                     }
@@ -110,9 +139,8 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
                         }
                         else {
 
-                            /* Move to next token */
-                            i += ret + 2;
-                            tok += ret + 2;
+                            i += ret + 1;
+                            tok += ret + 1;
                             processed_tok += ret + 2;
                         }
                     }
@@ -125,12 +153,13 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
                         processed_tok += 2;
                         char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
                         str2u128(value, (uint128_t *)(rule->value));
+                        free(value);
                     }
 
                     break;
 
                 default:
-                    fprintf(stderr, "Key: %s, unknown data type[%d]\n", rule->key, rule->type);
+                    fprintf(stderr, "Key: %s, unknown data type[%d]!\n", rule->key, rule->type);
                     break;
 
             } /* end of switch */
@@ -166,8 +195,8 @@ static int json_parse_array(const char *json, jsmntok_t *tok, int tok_count, jso
     assert(rule != NULL);
 
 #ifdef _DEBUG_JSON_PARSE_
-    fprintf(stdout, "Array[%s] size: %d, type: %d, array buffer size: %zu, single element size: %zu\n", \
-            rule->key, array_size, rule->array_element_type, rule->value_len, rule->single_array_element_size);
+    fprintf(stdout, "Array[%s] size: %d, type: %s, array buffer size: %zu, single element size: %zu\n", \
+            rule->key, array_size, json_type_str(rule->array_element_type), rule->value_len, rule->single_array_element_size);
 #endif
 
     for (i = 0; i < array_size; i++) {

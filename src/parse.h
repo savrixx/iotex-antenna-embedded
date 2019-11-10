@@ -10,6 +10,7 @@ extern "C" {
 
 
 typedef enum {
+    JONN_TYPE_UNDEFINED,
     JSON_TYPE_STR,
     JSON_TYPE_TIME,
     JSON_TYPE_ARRAY,
