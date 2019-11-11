@@ -35,6 +35,7 @@ no_int128:
 json_parse_test: json_parse_test.o
 
 # Unittest 
+rule_unittest: rule_unittest.o
 u128_unittest: u128_unittest.o
 basic_get_test: basic_get_test.o
 compose_url_test: compose_url_test.o

@@ -20,7 +20,7 @@ typedef struct {
  * #key: key to find
  * $return: successed retrun matched rule, failed retrun NULL
  */
-static json_parse_rule *find_rule_by_key(json_parse_rule *rule, const char *key) {
+json_parse_rule *find_rule_by_key(json_parse_rule *rule, const char *key) {
 
     if (!rule || !key) {
 
@@ -40,7 +40,7 @@ static json_parse_rule *find_rule_by_key(json_parse_rule *rule, const char *key)
     return NULL;
 }
 
-static json_parse_rule *find_sub_rule_by_key(json_parse_rule *rule, const char *key) {
+json_parse_rule *find_sub_rule_by_key(json_parse_rule *rule, const char *key) {
 
     json_parse_rule *found = find_rule_by_key(rule, key);
 

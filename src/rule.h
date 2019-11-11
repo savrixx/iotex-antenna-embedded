@@ -9,6 +9,9 @@ extern "C" {
 
 int rule_action_info_bind(json_parse_rule *rule_chain, void *element);
 
+json_parse_rule *find_rule_by_key(json_parse_rule *rule, const char *key);
+json_parse_rule *find_sub_rule_by_key(json_parse_rule *rule, const char *key);
+
 #ifdef	__cplusplus
 }
 #endif
