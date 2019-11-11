@@ -207,7 +207,6 @@ static int json_parse_array(const char *json, jsmntok_t *tok, int tok_count, jso
             if (!rule->sub || !rule->array_element_bind || rule->single_array_element_size == 0) {
 
                 return -1;
-
             }
 
             /* Bind array element data to parse rule */
