@@ -268,7 +268,7 @@ int json_parse_response(const char *response, json_parse_rule *rules) {
 
     if ((processed_tok = json_parse_object(response, token, tok_total - 1, rules)) != tok_total - 1) {
 
-        fprintf(stderr, "Joan parse failed, total token: %d, processed token: %d\n", tok_total - 1, processed_tok);
+        fprintf(stderr, "Json parse failed, total token: %d, processed token: %d\n", tok_total - 1, processed_tok);
         return -1;
     }
 

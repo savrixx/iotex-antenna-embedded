@@ -15,18 +15,24 @@ TARGETS = libiotexemb.a libiotexemb.so
 SCRIPTS=scripts
 UNITTEST=unittest
 
-.PHONY:all clean distclean test install help style statistics no_int128
+.PHONY:all clean distclean test install help style statistics no_int128 release
 .SILENT: clean
 
 all:$(TARGETS)
 
 clean:
 	find . -name "*.o" | xargs rm -f 
-	$(RM) *.o *.so *~ a.out depend.d $(TARGETS) build -rf
+	$(RM) -rf *.o *.so *~ a.out depend.d $(TARGETS) build
 
 distclean:
 	make clean
 	make clean -C $(UNITTEST)
+
+release:$(TARGETS)
+	@ls *.so *.a -lh
+	@$(STRIP) libiotexemb.so
+	@$(STRIP) libiotexemb.a
+	@ls *.so *.a -lh
 
 test:libiotexemb.so
 	make -C $(UNITTEST)

@@ -6,9 +6,9 @@
 #include "iotex_emb.h"
 
 
-int iotex_emb_get_chainemeta(iotex_st_chain_meta *chain) {
+int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain) {
 
-    json_parse_rule epochs_rules[] = {
+    json_parse_rule epoch_rules[] = {
 
         {"num", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.num},
         {"height", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.height},
@@ -21,7 +21,7 @@ int iotex_emb_get_chainemeta(iotex_st_chain_meta *chain) {
         {"height", JSON_TYPE_NUMBER, NULL, (void *) &chain->height},
         {"numActions", JSON_TYPE_NUMBER, NULL, (void *) &chain->numActions},
         {"tps", JSON_TYPE_NUMBER, NULL, (void *) &chain->tps},
-        {"epoch", JSON_TYPE_OBJECT, epochs_rules},
+        {"epoch", JSON_TYPE_OBJECT, epoch_rules},
         {"tpsFloat", JSON_TYPE_DOUBLE, NULL, (void *) &chain->tpsFloat},
         {NULL,}
     };
@@ -38,7 +38,7 @@ int iotex_emb_get_chainemeta(iotex_st_chain_meta *chain) {
 }
 
 
-int iotex_emb_get_accountmeta(const char *account, iotex_st_account_meta *meta) {
+int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta) {
 
     json_parse_rule account_meta[] = {
 
@@ -65,3 +65,18 @@ int iotex_emb_get_accountmeta(const char *account, iotex_st_account_meta *meta) 
 
     return res_get_data(url, account_rules);
 }
+
+
+int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action) {
+
+    char url[IOTEX_EMB_MAX_URL_LEN];
+
+    if (!req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, block)) {
+
+        __WARN_MSG__("compose url failed!");
+        return -1;
+    }
+
+    return res_get_actions(url, action, 1) == 1;
+}
+

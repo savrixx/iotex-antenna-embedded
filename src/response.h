@@ -6,9 +6,10 @@ extern "C" {
 #endif
 
 #include "parse.h"
+struct iotex_st_action_info;
 
 int res_get_data(const char *request, json_parse_rule *rules);
-
+int res_get_actions(const char *request, struct iotex_st_action_info *actions, size_t max_size);
 
 #ifdef __cplusplus
 }
