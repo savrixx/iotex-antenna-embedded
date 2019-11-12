@@ -46,7 +46,7 @@ void test_get_transfers_by_block(const char *block) {
 
     char url[IOTEX_EMB_MAX_URL_LEN];
 
-    if (!req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, atoi(block))) {
+    if (!req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, block)) {
 
         UNITTEST_FAIL("req_compose_url");
         return;

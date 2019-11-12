@@ -56,7 +56,7 @@ static const iotex_st_request_conf __g_req_configs[] = {
     {
         REQ_GET_TRANSFERS_BY_BLOCK,
         {"transfers", "block", NULL},
-        "%u",
+        "%s",
     },
 
     {

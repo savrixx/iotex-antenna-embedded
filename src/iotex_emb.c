@@ -1,3 +1,4 @@
+#include "u128.h"
 #include "parse.h"
 #include "debug.h"
 #include "config.h"
@@ -70,8 +71,10 @@ int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta)
 int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action) {
 
     char url[IOTEX_EMB_MAX_URL_LEN];
+    char block_str[UINT128_RAW_MAX_LEN];
 
-    if (!req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, block)) {
+    /* Block height must convert to string, in case vsnprintf can't handle */
+    if (!req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, u1282str(block, block_str, sizeof(block_str)))) {
 
         __WARN_MSG__("compose url failed!");
         return -1;

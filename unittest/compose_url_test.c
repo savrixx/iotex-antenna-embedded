@@ -4,7 +4,9 @@
 #include "config.h"
 #include "unittest.h"
 #include "test_config.h"
+#include "../src/u128.h"
 #include "../src/request.h"
+
 
 static char url[IOTEX_EMB_MAX_URL_LEN];
 
@@ -76,14 +78,15 @@ void test_get_action_by_addr() {
 
 void test_transfers_by_block() {
 
+    char u128_str[UINT128_RAW_MAX_LEN];
 
-    for (int i = 0; i < 10; i++) {
+    for (uint128_t i = 0; i < 10; i++) {
 
-        UNITTEST_ASSERT_NE(req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, i), NULL);
+        UNITTEST_ASSERT_NE(req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, u1282str(i, u128_str, sizeof(u128_str))), NULL);
         UNITTEST_ASSERT_EQ(url[strlen(url) - 1], i + '0');
     }
 
-    UNITTEST_ASSERT_NE(req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, atoi(TEST_TRANSFERS_BLOCK)), NULL);
+    UNITTEST_ASSERT_NE(req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, TEST_TRANSFERS_BLOCK), NULL);
     UNITTEST_ASSERT_STR_EQ(url + strlen(url) - strlen(TEST_TRANSFERS_BLOCK), TEST_TRANSFERS_BLOCK, strlen(TEST_TRANSFERS_BLOCK));
 
     UNITTEST_AUTO_PASS();
