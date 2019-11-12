@@ -1,4 +1,5 @@
 #!/bin/sh
+source env.sh
 
 scripts=`find . -name "*.sh" -not -path "$0"`
 unittests=`find ../objs -name "*_unittest" -type f`

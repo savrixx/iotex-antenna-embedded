@@ -5,7 +5,7 @@ LDSHFLAGS	= -rdynamic -shared
 ARFLAGS		= rcv
 CFLAGS		= -Wall -g -fPIC -I../src
 CXXFLAGS	= -Wall -g -fPIC -I../src
-LDFLAGS		= -L.. -liotexemb -lcurl -Wl,-R -Wl,..
+LDFLAGS		= -L.. -liotexemb -lcurl
 
 SRCS=$(wildcard *.c) $(wildcard *.cpp)
 OBJDIR=../objs
@@ -22,7 +22,7 @@ objdir:
 	@mkdir -p $(OBJDIR)
 
 clean:
-	$(RM) *.o a.out depend.d $(TARGETS) $(OBJDIR) -rf
+	$(RM) -rf *.o a.out depend.d $(TARGETS) $(OBJDIR)
 
 $(TARGETS):
 	@mkdir -p $(OBJDIR)

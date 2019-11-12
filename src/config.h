@@ -13,8 +13,16 @@ extern "C" {
 /* Response */
 #define IOTEX_EBM_MAX_RES_LEN 16 * 1024
 
-/* Certs */
+/*
+ * Certs
+ * TODO: certs path and info auto search and configurable
+ */
+#ifdef __APPLE__
+#define DEF_CA_INFO "/etc/ssl/cert.pem"
+#else
 #define DEF_CA_INFO "/etc/ssl/certs/ca-certificates.crt"
+#endif
+
 #define DEF_CA_PATH "/etc/ssl/certs"
 
 /* Data type length */

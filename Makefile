@@ -3,7 +3,7 @@ CC		= $(CROSS_COMPILE)gcc
 CXX		= $(CROSS_COMPILE)g++
 CFLAGS	= -Wall -g -fPIC -D_DEBUG_JSON_PARSE_
 CXXFLAGS	= -Wall -g -fPIC -D_DEBUG_JSON_PARSE_
-LDSHFLAGS	= -rdynamic -shared -fPIC
+LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl
 ARFLAGS		= rcv
 CODE_STYLE	= astyle --align-pointer=name --align-reference=name --suffix=none --break-blocks --pad-oper --pad-header --break-blocks --keep-one-line-blocks --indent-switches --indent=spaces
 

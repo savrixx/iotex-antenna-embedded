@@ -1,5 +1,5 @@
 #ifndef _IOTEX_EMB_H_
-#define _IOTEX_EBM_H_
+#define _IOTEX_EMB_H_
 
 
 #ifdef	__cplusplus
