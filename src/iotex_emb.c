@@ -83,3 +83,17 @@ int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action) 
     return res_get_actions(url, action, 1) == 1;
 }
 
+
+int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action) {
+
+    char url[IOTEX_EMB_MAX_URL_LEN];
+
+    if (!req_compose_url(url, sizeof(url), REQ_GET_ACTIONS_BY_HASH, hash)) {
+
+        __WARN_MSG__("compose url failed!");
+        return -1;
+    }
+
+    return res_get_actions(url, action, 1) == 1;
+}
+

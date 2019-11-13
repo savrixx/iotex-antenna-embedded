@@ -56,14 +56,45 @@ void test_get_transfer_by_block() {
     UNITTEST_ASSERT_STR_EQ(action_info.action.senderPubKey, TEST_TRANSFERS_BLOCK_SENDER_PUBKEY, strlen(TEST_TRANSFERS_BLOCK_SENDER_PUBKEY));
 
     /* iotex_st_action_info.action.core */
-    UNITTEST_ASSERT_EQ(1, u128_equal(1, action_info.action.core.version));
-    UNITTEST_ASSERT_EQ(1, u128_equal(2, action_info.action.core.nonce));
-    UNITTEST_ASSERT_EQ(1, u128_equal(20000, action_info.action.core.gasLimit));
-    UNITTEST_ASSERT_EQ(1, u128_equal(1000000000000, action_info.action.core.gasPrice));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("1"), action_info.action.core.version));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("2"), action_info.action.core.nonce));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("20000"), action_info.action.core.gasLimit));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("1000000000000"), action_info.action.core.gasPrice));
 
     /* iotex_st_action_info.action.core.transfer */
-    UNITTEST_ASSERT_EQ(1, u128_equal(1000000000000000, action_info.action.core.transfer.amount));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("1000000000000000"), action_info.action.core.transfer.amount));
     UNITTEST_ASSERT_STR_EQ(action_info.action.core.transfer.recipient, TEST_ACCOUNT_ADDR, strlen(TEST_ACCOUNT_ADDR));
+
+    UNITTEST_AUTO_PASS();
+}
+
+
+void test_get_action_by_hash() {
+
+    iotex_st_action_info action_info;
+    UNITTEST_ASSERT_EQ(1, iotex_emb_get_action_by_hash(TEST_ACTION_HASH, &action_info));
+
+    /* iotex_st_action_info */
+    UNITTEST_ASSERT_STR_EQ(action_info.actHash, TEST_ACTION_HASH, strlen(action_info.actHash));
+    UNITTEST_ASSERT_STR_EQ(action_info.blkHash, "33e1d2858cec24059f22348b862a2f415a21bb14b7d96733249a12e96c542969", strlen(action_info.blkHash));
+    UNITTEST_ASSERT_EQ(1, u128_equal(action_info.blkHeight, construct_u128("222656")));
+    UNITTEST_ASSERT_STR_EQ(action_info.sender, "io1e2nqsyt7fkpzs5x7zf2uk0jj72teu5n6aku3tr", strlen(action_info.sender));
+    UNITTEST_ASSERT_STR_EQ(action_info.timestamp, "2019-05-17T23:26:20Z", strlen(action_info.timestamp));
+    UNITTEST_ASSERT_EQ(1, u128_equal(action_info.gasFee, construct_u128("10000000000000000")));
+
+    /* iotex_st_action_info.action */
+    UNITTEST_ASSERT_STR_EQ(action_info.action.signature, "awRLFCvU4X5SVyz2IDU5rdjmKjUk3BOchmt/3bmvgi9GJJW3pat4I0i/qqROowPbVJ8nj+eZNQ5Okhgt6ezPgAE=", strlen(action_info.action.signature));
+    UNITTEST_ASSERT_STR_EQ(action_info.action.senderPubKey, "BLhgbOGdny7iNzyHe9axp5KWTb8sMJzad78+bc5cTYRAUqVNF6igy5t9z2jqM2Zneiw17d6xSgbokcDnVRxmuM8=", strlen(action_info.action.senderPubKey));
+
+    /* iotex_st_action_info.action.core */
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("1"), action_info.action.core.version));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("1"), action_info.action.core.nonce));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("20000"), action_info.action.core.gasLimit));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("1000000000000"), action_info.action.core.gasPrice));
+
+    /* iotex_st_action_info.action.core.transfer */
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("1000000000000000"), action_info.action.core.transfer.amount));
+    UNITTEST_ASSERT_STR_EQ(action_info.action.core.transfer.recipient, "io1e2nqsyt7fkpzs5x7zf2uk0jj72teu5n6aku3tr", strlen(action_info.action.core.transfer.recipient));
 
     UNITTEST_AUTO_PASS();
 }
@@ -74,5 +105,6 @@ int main(int argc, char **argv) {
     test_get_chain_meta();
     test_get_account_meta();
     test_get_transfer_by_block();
+    test_get_action_by_hash();
     return 0;
 }
