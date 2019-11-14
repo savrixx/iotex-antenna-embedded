@@ -187,19 +187,21 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
  */
 static int json_parse_array(const char *json, jsmntok_t *tok, int tok_count, json_parse_rule *rule, int array_size) {
 
-    int i, ret;
-    int processed_tok = 0;
-
     assert(json != NULL);
     assert(tok != NULL);
     assert(rule != NULL);
 
+    int i, ret;
+    int processed_tok = 0;
+    int single_element_tok_size = tok_count / array_size;
+
 #ifdef _DEBUG_JSON_PARSE_
-    fprintf(stdout, "Array[%s] size: %d, type: %s, array buffer size: %zu, single element size: %zu\n", \
-            rule->key, array_size, json_type_str(rule->array_element_type), rule->value_len, rule->single_array_element_size);
+    fprintf(stdout, "Array[%s] size: %d, type: %s, array buffer size: %zu, single element size: %zu, tok_size:%d\n", \
+            rule->key, array_size, json_type_str(rule->array_element_type), rule->value_len, rule->single_array_element_size, tok_count);
 #endif
 
     for (i = 0; i < array_size; i++) {
+
 
         if (tok->type == JSMN_OBJECT && rule->array_element_type == JSON_TYPE_OBJECT) {
 
@@ -216,13 +218,13 @@ static int json_parse_array(const char *json, jsmntok_t *tok, int tok_count, jso
             }
 
             /* Parse array object data */
-            if ((ret = json_parse_object(json, tok, tok_count, rule->sub)) == -1) {
+            if ((ret = json_parse_object(json, tok + 1, single_element_tok_size, rule->sub)) == -1) {
 
                 return -1;
             }
 
-            tok_count -= ret;
-            processed_tok += ret;
+            tok += ret + 1;
+            processed_tok += ret + 1;
         }
         else {
 
@@ -230,8 +232,7 @@ static int json_parse_array(const char *json, jsmntok_t *tok, int tok_count, jso
         }
     }
 
-    /* Add array itself */
-    return processed_tok + 1;
+    return processed_tok;
 }
 
 

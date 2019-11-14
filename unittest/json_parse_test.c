@@ -5,6 +5,7 @@
 #include "test_config.h"
 #include "../src/u128.h"
 #include "../src/debug.h"
+#include "../src/rule.h"
 #include "../src/parse.h"
 #include "../src/request.h"
 #include "../src/iotex_emb.h"
@@ -137,11 +138,107 @@ void test_parse_number() {
 }
 
 
+struct person {
+
+    char name[32];
+    uint128_t age;
+};
+
+
+int person_data_and_rule_bind(json_parse_rule *rule, void *data) {
+
+    if (!rule || !data) {
+
+        return -1;
+    }
+
+    json_parse_rule *f;
+    struct person *p = (struct person *)data;
+
+    while (rule && rule->key) {
+
+        if ((f = find_rule_by_key(rule, "age"))) {
+
+            f->value = (void *)&p->age;
+        }
+        else if ((f = find_rule_by_key(rule, "name"))) {
+
+            f->value = (void *)&p->name;
+            f->value_len = sizeof(p->name);
+        }
+
+        rule++;
+    }
+
+    return 0;
+
+}
+
+void test_parse_object_array() {
+
+
+    uint128_t total;
+    struct person persons[7];
+    const char *raw_string = "{"
+                             "\"total\": 7,"
+                             "\"persons\": ["
+                             "{\"name\": \"Marie\", \"age\": 18},"
+                             "{\"name\": \"Johara\", \"age\": 32},"
+                             "{\"name\": \"Wilmar\", \"age\": 39},"
+                             "{\"name\": \"Arnold\", \"age\": 45},"
+                             "{\"name\": \"Morgan\", \"age\": 21},"
+                             "{\"name\": \"Rezene\", \"age\": 78},"
+                             "{\"name\": \"Souza\", \"age\": 32},"
+                             "],"
+                             "}";
+
+
+    json_parse_rule p_rules[]  = {
+
+        {"age", JSON_TYPE_NUMBER},
+        {"name", JSON_TYPE_STR},
+        {NULL},
+    };
+
+    json_parse_rule rules[] = {
+
+        {"total", JSON_TYPE_NUMBER, NULL, &total},
+        {"persons", JSON_TYPE_ARRAY, p_rules, (void *)persons, sizeof(persons) / sizeof(persons[0]), JSON_TYPE_OBJECT, sizeof(struct person), person_data_and_rule_bind},
+        {NULL},
+    };
+
+    UNITTEST_ASSERT_EQ(0, json_parse_response(raw_string, rules));
+
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("7"), total));
+
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("18"), persons[0].age));
+    UNITTEST_ASSERT_STR_EQ("Marie", persons[0].name, strlen(persons[0].name));
+
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("32"), persons[1].age));
+    UNITTEST_ASSERT_STR_EQ("Johara", persons[1].name, strlen(persons[1].name));
+
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("39"), persons[2].age));
+    UNITTEST_ASSERT_STR_EQ("Wilmar", persons[2].name, strlen(persons[2].name));
+
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("45"), persons[3].age));
+    UNITTEST_ASSERT_STR_EQ("Arnold", persons[3].name, strlen(persons[3].name));
+
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("21"), persons[4].age));
+    UNITTEST_ASSERT_STR_EQ("Morgan", persons[4].name, strlen(persons[4].name));
+
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("78"), persons[5].age));
+    UNITTEST_ASSERT_STR_EQ("Rezene", persons[5].name, strlen(persons[5].name));
+
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("32"), persons[6].age));
+    UNITTEST_ASSERT_STR_EQ("Souza", persons[6].name, strlen(persons[6].name));
+}
+
 int main(int argc, char **argv) {
 
     test_parse_str();
     test_parse_number();
     test_parse_double();
     test_parse_object();
+    test_parse_object_array();
     return 0;
 }
