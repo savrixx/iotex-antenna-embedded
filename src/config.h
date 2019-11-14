@@ -11,7 +11,7 @@ extern "C" {
 #define IOTEX_EMB_MAX_URL_LEN 256
 
 /* Response */
-#define IOTEX_EBM_MAX_RES_LEN 16 * 1024
+#define IOTEX_EBM_MAX_RES_LEN (32 * 1024)
 
 /*
  * Certs

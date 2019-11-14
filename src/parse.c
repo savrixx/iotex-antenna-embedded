@@ -246,32 +246,49 @@ static int json_parse_array(const char *json, jsmntok_t *tok, int tok_count, jso
  */
 int json_parse_response(const char *response, json_parse_rule *rules) {
 
+    assert(response != NULL);
+    assert(rules != NULL);
+
     int tok_total;
     int processed_tok;
     jsmn_parser parser;
-    jsmntok_t token[128];
+    jsmntok_t *token = NULL;
+    size_t token_size = 128;
 
     jsmn_init(&parser);
 
+    /* According to response length dynamic alloc jsmntok_t */
+    token_size += strlen(response) / sizeof(jsmntok_t);
+
+    if (!(token = calloc(sizeof(jsmntok_t), token_size))) {
+
+        return -1;
+    }
+
     if ((tok_total = jsmn_parse(&parser,
                                 response, strlen(response),
-                                token, sizeof(token) / sizeof(token[0]))) < 0) {
+                                token, token_size)) < 0) {
 
         fprintf(stderr, "Json parse response failed: %d\n", tok_total);
+        free(token);
         return -1;
     }
 
     if (tok_total < 1 || token[0].type != JSMN_OBJECT) {
 
         fprintf(stderr, "Json parse failed: object expected\n");
+        free(token);
         return -1;
     }
 
+    /* Parse json object and save data to rule.value */
     if ((processed_tok = json_parse_object(response, token, tok_total - 1, rules)) != tok_total - 1) {
 
         fprintf(stderr, "Json parse failed, total token: %d, processed token: %d\n", tok_total - 1, processed_tok);
+        free(token);
         return -1;
     }
 
+    free(token);
     return 0;
 }
