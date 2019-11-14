@@ -67,8 +67,11 @@ typedef struct iotex_st_action_info {
 
 int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain_meta);
 int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta);
+
 int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action);
+
 int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action);
+int iotex_emb_get_action_by_addr(const char *addr, uint32_t start_idx, uint32_t count, iotex_st_action_info *actions, size_t actions_size);
 
 #ifdef	__cplusplus
 }

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "debug.h"
 #include "config.h"
 #include "unittest.h"
@@ -100,11 +101,29 @@ void test_get_action_by_hash() {
 }
 
 
+void test_get_action_by_addr() {
+
+    int total_actions;
+    size_t count = 100;
+    iotex_st_action_info *actions;
+
+    if (!(actions = calloc(sizeof(iotex_st_action_info), count))) {
+
+        UNITTEST_FAIL("calloc");
+    }
+
+    UNITTEST_ASSERT_NE(-1, (total_actions = iotex_emb_get_action_by_addr(TEST_ACCOUNT_ADDR, 0, count, actions, count)));
+    fprintf(stdout, "Address: %s, actual actions number: %d\n", TEST_ACCOUNT_ADDR, total_actions);
+    UNITTEST_AUTO_PASS();
+}
+
 int main(int argc, char **argv) {
 
     test_get_chain_meta();
     test_get_account_meta();
     test_get_transfer_by_block();
+
     test_get_action_by_hash();
+    test_get_action_by_addr();
     return 0;
 }
