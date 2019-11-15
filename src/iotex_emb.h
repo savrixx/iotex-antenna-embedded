@@ -17,6 +17,7 @@ typedef char iotex_t_time[IOTEX_EMB_LIMIT_TIME_LEN];
 typedef char iotex_t_key[IOTEX_EMB_LIMIT_KEY_LEN];
 typedef char iotex_t_id[IOTEX_EMB_LIMIT_ID_LEN];
 typedef uint128_t iotex_t_number;
+typedef uint32_t iotex_t_boolean;
 
 
 typedef struct {
@@ -68,7 +69,7 @@ typedef struct iotex_st_action_info {
 
 typedef struct {
     iotex_t_id id;
-    iotex_t_number status;
+    iotex_t_boolean status;
     struct {
         struct {
             iotex_t_number annual;

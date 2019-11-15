@@ -235,12 +235,65 @@ void test_parse_object_array() {
     UNITTEST_ASSERT_STR_EQ("Souza", persons[6].name, strlen(persons[6].name));
 }
 
+
+void test_parse_boolean() {
+
+    iotex_t_boolean b[11];
+    const char *raw_string = "{"
+                             "\"key1\": true,"
+                             "\"key2\": false,"
+                             "\"key3\": \"true\","
+                             "\"key4\": \"True\","
+                             "\"key5\": \"false\","
+                             "\"key6\": \"False\","
+                             "\"key7\": \"adadlse\","
+                             "\"key8\": 1,"
+                             "\"key9\": 0,"
+                             "\"key10\": 10,"
+                             "\"key11\": null,"
+                             "}";
+
+    json_parse_rule rules[] = {
+
+        {"key1", JSON_TYPE_BOOLEAN, NULL, &b[0]},
+        {"key2", JSON_TYPE_BOOLEAN, NULL, &b[1]},
+        {"key3", JSON_TYPE_BOOLEAN, NULL, &b[2]},
+        {"key4", JSON_TYPE_BOOLEAN, NULL, &b[3]},
+        {"key5", JSON_TYPE_BOOLEAN, NULL, &b[4]},
+        {"key6", JSON_TYPE_BOOLEAN, NULL, &b[5]},
+        {"key7", JSON_TYPE_BOOLEAN, NULL, &b[6]},
+        {"key8", JSON_TYPE_BOOLEAN, NULL, &b[7]},
+        {"key9", JSON_TYPE_BOOLEAN, NULL, &b[8]},
+        {"key10", JSON_TYPE_BOOLEAN, NULL, &b[9]},
+        {"key11", JSON_TYPE_BOOLEAN, NULL, &b[10]},
+        {NULL},
+    };
+
+    UNITTEST_ASSERT_EQ(0, json_parse_response(raw_string, rules));
+
+    /* Only true is true */
+    UNITTEST_ASSERT_EQ(b[0], 1);
+    UNITTEST_ASSERT_EQ(b[1], 0);
+    UNITTEST_ASSERT_EQ(b[2], 0);
+    UNITTEST_ASSERT_EQ(b[3], 0);
+    UNITTEST_ASSERT_EQ(b[4], 0);
+    UNITTEST_ASSERT_EQ(b[5], 0);
+    UNITTEST_ASSERT_EQ(b[6], 0);
+    UNITTEST_ASSERT_EQ(b[7], 0);
+    UNITTEST_ASSERT_EQ(b[8], 0);
+    UNITTEST_ASSERT_EQ(b[9], 0);
+    UNITTEST_ASSERT_EQ(b[10], 0);
+
+    UNITTEST_AUTO_PASS();
+}
+
 int main(int argc, char **argv) {
 
     test_parse_str();
     test_parse_number();
     test_parse_double();
     test_parse_object();
+    test_parse_boolean();
     test_parse_object_array();
     return 0;
 }

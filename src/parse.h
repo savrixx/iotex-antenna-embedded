@@ -17,6 +17,7 @@ typedef enum {
     JSON_TYPE_DOUBLE,
     JSON_TYPE_OBJECT,
     JSON_TYPE_NUMBER,
+    JSON_TYPE_BOOLEAN
 } json_datatype;
 
 

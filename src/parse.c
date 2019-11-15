@@ -38,7 +38,7 @@ static const char *jsmn_type_str(jsmntype_t type) {
 
 static const char *json_type_str(json_datatype type) {
 
-    static const char *__g_json_type_str[] = {"Undefined", "String", "Time", "Array", "Double", "Object", "Number"};
+    static const char *__g_json_type_str[] = {"Undefined", "String", "Time", "Array", "Double", "Object", "Number", "Boolean"};
 
     if (type >= 0 && type < sizeof(__g_json_type_str) / sizeof(__g_json_type_str[0])) {
 
@@ -68,6 +68,7 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
     assert(rules != NULL);
 
     size_t i = 0;
+    char boolean_head;
     int processed_tok = 0, ret;
     json_parse_rule *rule = NULL;
 
@@ -154,6 +155,24 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
                         char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
                         str2u128(value, (uint128_t *)(rule->value));
                         free(value);
+                    }
+
+                    break;
+
+                case JSON_TYPE_BOOLEAN:
+                    if ((tok[1].type == JSMN_STRING || tok[1].type == JSMN_PRIMITIVE) && rule->value) {
+
+                        processed_tok += 2;
+                        boolean_head = json[tok[1].start];
+
+                        if (tok[1].type == JSMN_PRIMITIVE && boolean_head == 't') {
+
+                            *(uint32_t *)(rule->value) = 1;
+                        }
+                        else {
+
+                            *(uint32_t *)(rule->value) = 0;
+                        }
                     }
 
                     break;

@@ -134,7 +134,7 @@ int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, si
     json_parse_rule validator_rule[] = {
 
         {"id", JSON_TYPE_STR},
-        {"status", JSON_TYPE_NUMBER},
+        {"status", JSON_TYPE_BOOLEAN},
         {"details", JSON_TYPE_OBJECT, details_rule},
     };
 
