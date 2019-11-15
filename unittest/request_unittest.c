@@ -91,6 +91,28 @@ void test_get_actions_by_addr(const char *addr, uint32_t start, uint32_t count) 
     UNITTEST_AUTO_PASS();
 }
 
+void test_get_member_validators() {
+
+    char url[IOTEX_EMB_MAX_URL_LEN];
+
+    if (!req_compose_url(url, sizeof(url), REQ_GET_MEMBER_VALIDATORS)) {
+
+        UNITTEST_FAIL("req_compose_url");
+        return;
+    }
+
+    __INFO_MSG__(url);
+
+    if (req_send_request(url, response_buf, sizeof(response_buf)) != 0) {
+
+        UNITTEST_FAIL("req_send_request");
+        return;
+    }
+
+    __INFO_MSG__(response_buf);
+    UNITTEST_AUTO_PASS();
+}
+
 
 int main(int argc, char **argv) {
 
@@ -99,4 +121,5 @@ int main(int argc, char **argv) {
     test_get_actions_by_hash(TEST_ACTION_HASH);
     test_get_actions_by_addr(TEST_ACCOUNT_ADDR, 0, 2);
     test_get_transfers_by_block(TEST_TRANSFERS_BLOCK);
+    test_get_member_validators();
 }

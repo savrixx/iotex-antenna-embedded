@@ -7,6 +7,7 @@ extern "C" {
 
 #include "parse.h"
 
+int rule_validator_bind(json_parse_rule *rule_chain, void *element);
 int rule_action_info_bind(json_parse_rule *rule_chain, void *element);
 
 json_parse_rule *find_rule_by_key(json_parse_rule *rule, const char *key);

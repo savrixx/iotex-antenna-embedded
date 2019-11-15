@@ -139,3 +139,46 @@ int rule_action_info_bind(json_parse_rule *rule_chain, void *element) {
     return 0;
 }
 
+
+int rule_validator_bind(json_parse_rule *rule_chain, void *element) {
+
+    if (!rule_chain || !element) {
+
+        return -1;
+    }
+
+    iotex_st_validator *validator = (iotex_st_validator *)element;
+    json_parse_rule *details_rule = find_sub_rule_by_key(rule_chain, "details");
+    json_parse_rule *details_reward_rule = find_sub_rule_by_key(details_rule, "reward");
+
+    if (!details_rule || !details_reward_rule) {
+
+        return -1;
+    }
+
+    st_rule_data_bind info[] = {
+
+        {"id", (void *) &validator->id, sizeof(validator->id)},
+        {"status", (void *) &validator->status},
+        {NULL}
+    };
+
+    st_rule_data_bind details[] = {
+
+        {"locktime", (void *) &validator->details.locktime},
+        {"minimum_amount", (void *) &validator->details.minimum_amount},
+        {NULL}
+    };
+
+    st_rule_data_bind details_reward[] = {
+
+        {"annual", (void *) &validator->details.reward},
+        {NULL}
+    };
+
+    bind_rule_and_data(rule_chain, info);
+    bind_rule_and_data(details_rule, details);
+    bind_rule_and_data(details_reward_rule, details_reward);
+
+    return 0;
+}

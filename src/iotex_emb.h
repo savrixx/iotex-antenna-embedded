@@ -15,6 +15,7 @@ typedef char iotex_t_account[IOTEX_EMB_LIMIT_ACCOUNT_LEN];
 typedef char iotex_t_hash[IOTEX_EMB_LIMIT_HASH_LEN];
 typedef char iotex_t_time[IOTEX_EMB_LIMIT_TIME_LEN];
 typedef char iotex_t_key[IOTEX_EMB_LIMIT_KEY_LEN];
+typedef char iotex_t_id[IOTEX_EMB_LIMIT_ID_LEN];
 typedef uint128_t iotex_t_number;
 
 
@@ -65,6 +66,20 @@ typedef struct iotex_st_action_info {
 } iotex_st_action_info;
 
 
+typedef struct {
+    iotex_t_id id;
+    iotex_t_number status;
+    struct {
+        struct {
+            iotex_t_number annual;
+        } reward;
+
+        iotex_t_number locktime;
+        iotex_t_number minimum_amount;
+    } details;
+} iotex_st_validator;
+
+
 int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain_meta);
 int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta);
 
@@ -72,6 +87,8 @@ int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action);
 
 int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action);
 int iotex_emb_get_action_by_addr(const char *addr, uint32_t start_idx, uint32_t count, iotex_st_action_info *actions, size_t actions_size);
+
+int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, size_t *actual_size);
 
 #ifdef	__cplusplus
 }

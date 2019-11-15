@@ -30,6 +30,7 @@ extern "C" {
 #define IOTEX_EMB_LIMIT_TIME_LEN 21
 #define IOTEX_EMB_LIMIT_HASH_LEN 65
 #define IOTEX_EMB_LIMIT_KEY_LEN 89
+#define IOTEX_EMB_LIMIT_ID_LEN 16
 
 #ifdef __cplusplus
 }

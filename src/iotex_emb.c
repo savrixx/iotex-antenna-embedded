@@ -1,4 +1,5 @@
 #include "u128.h"
+#include "rule.h"
 #include "parse.h"
 #include "debug.h"
 #include "config.h"
@@ -111,3 +112,44 @@ int iotex_emb_get_action_by_addr(const char *addr, uint32_t start_idx, uint32_t 
     return res_get_actions(url, actions, actions_size);
 }
 
+
+int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, size_t *actual_size) {
+
+    char url[IOTEX_EMB_MAX_URL_LEN];
+
+    json_parse_rule reward_rule[] = {
+
+        {"annual", JSON_TYPE_NUMBER},
+        {NULL},
+    };
+
+    json_parse_rule details_rule[] = {
+
+        {"locktime", JSON_TYPE_NUMBER},
+        {"minimum_amount", JSON_TYPE_NUMBER},
+        {"reward", JSON_TYPE_OBJECT, reward_rule},
+        {NULL},
+    };
+
+    json_parse_rule validator_rule[] = {
+
+        {"id", JSON_TYPE_STR},
+        {"status", JSON_TYPE_NUMBER},
+        {"details", JSON_TYPE_OBJECT, details_rule},
+    };
+
+    json_parse_rule rule = {
+
+        NULL, JSON_TYPE_ARRAY, validator_rule,
+        validators, max_size, JSON_TYPE_OBJECT,
+        sizeof(iotex_st_validator), rule_validator_bind, actual_size
+    };
+
+    if (!req_compose_url(url, sizeof(url), REQ_GET_MEMBER_VALIDATORS)) {
+
+        __WARN_MSG__("compose url failed!");
+        return -1;
+    }
+
+    return res_get_data(url, &rule);
+}
