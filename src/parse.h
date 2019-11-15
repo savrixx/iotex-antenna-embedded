@@ -10,7 +10,7 @@ extern "C" {
 
 
 typedef enum {
-    JONN_TYPE_UNDEFINED,
+    JSON_TYPE_UNDEFINED,
     JSON_TYPE_STR,
     JSON_TYPE_TIME,
     JSON_TYPE_ARRAY,
@@ -45,6 +45,9 @@ typedef struct json_parse_rule {
 
     /* for JSON_TYPE_OBJECT array use, bind parse rule and array element */
     int (*array_element_bind)(struct json_parse_rule *rule, void *data);
+
+    /* for JSON_TYPE_ARRAY type use, return array actual size(don't care set as NULL) */
+    size_t *array_actual_size;
 } json_parse_rule;
 
 

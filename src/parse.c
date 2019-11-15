@@ -232,6 +232,12 @@ static int json_parse_array(const char *json, jsmntok_t *tok, int tok_count, jso
         }
     }
 
+    /* Update array actual size*/
+    if (rule->array_actual_size) {
+
+        *rule->array_actual_size = array_size;
+    }
+
     return processed_tok;
 }
 
@@ -253,12 +259,12 @@ int json_parse_response(const char *response, json_parse_rule *rules) {
     int processed_tok;
     jsmn_parser parser;
     jsmntok_t *token = NULL;
-    size_t token_size = 128;
+    size_t token_size = 0;
 
     jsmn_init(&parser);
 
     /* According to response length dynamic alloc jsmntok_t */
-    token_size += strlen(response) / sizeof(jsmntok_t);
+    token_size = strlen(response) >> 2;
 
     if (!(token = calloc(sizeof(jsmntok_t), token_size))) {
 
@@ -274,17 +280,36 @@ int json_parse_response(const char *response, json_parse_rule *rules) {
         return -1;
     }
 
-    if (tok_total < 1 || token[0].type != JSMN_OBJECT) {
+    if (tok_total < 1) {
 
-        fprintf(stderr, "Json parse failed: object expected\n");
+        fprintf(stderr, "Json parse failed!\n");
         free(token);
         return -1;
     }
 
-    /* Parse json object and save data to rule.value */
-    if ((processed_tok = json_parse_object(response, token, tok_total - 1, rules)) != tok_total - 1) {
+    /* Json object */
+    if (token[0].type == JSMN_OBJECT) {
 
-        fprintf(stderr, "Json parse failed, total token: %d, processed token: %d\n", tok_total - 1, processed_tok);
+        if ((processed_tok = json_parse_object(response, token, tok_total - 1, rules)) != tok_total - 1) {
+
+            fprintf(stderr, "Json parse failed, total token: %d, processed token: %d\n", tok_total - 1, processed_tok);
+            free(token);
+            return -1;
+        }
+    }
+    /* Json array */
+    else if (token[0].type == JSMN_ARRAY) {
+
+        if ((processed_tok = json_parse_array(response, token + 1, tok_total - 1, rules, token[0].size)) != tok_total - 1) {
+
+            fprintf(stderr, "Json parse failed, total token: %d, processed token: %d\n", tok_total - 1, processed_tok);
+            free(token);
+            return -1;
+        }
+    }
+    else {
+
+        fprintf(stdout, "Unknown type: %d\n", token[0].type);
         free(token);
         return -1;
     }

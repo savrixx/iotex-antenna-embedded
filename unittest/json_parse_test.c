@@ -178,6 +178,7 @@ void test_parse_object_array() {
 
 
     uint128_t total;
+    size_t actual_size;
     struct person persons[7];
     const char *raw_string = "{"
                              "\"total\": 7,"
@@ -203,13 +204,14 @@ void test_parse_object_array() {
     json_parse_rule rules[] = {
 
         {"total", JSON_TYPE_NUMBER, NULL, &total},
-        {"persons", JSON_TYPE_ARRAY, p_rules, (void *)persons, sizeof(persons) / sizeof(persons[0]), JSON_TYPE_OBJECT, sizeof(struct person), person_data_and_rule_bind},
+        {"persons", JSON_TYPE_ARRAY, p_rules, (void *)persons, sizeof(persons) / sizeof(persons[0]), JSON_TYPE_OBJECT, sizeof(struct person), person_data_and_rule_bind, &actual_size},
         {NULL},
     };
 
     UNITTEST_ASSERT_EQ(0, json_parse_response(raw_string, rules));
 
     UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("7"), total));
+    UNITTEST_ASSERT_EQ(actual_size, 7);
 
     UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("18"), persons[0].age));
     UNITTEST_ASSERT_STR_EQ("Marie", persons[0].name, strlen(persons[0].name));
