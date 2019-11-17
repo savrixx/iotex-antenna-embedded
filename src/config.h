@@ -32,6 +32,9 @@ extern "C" {
 #define IOTEX_EMB_LIMIT_KEY_LEN 89
 #define IOTEX_EMB_LIMIT_ID_LEN 16
 
+const char *config_search_cert_dir();
+const char *config_search_cert_file();
+
 #ifdef __cplusplus
 }
 #endif

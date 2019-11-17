@@ -39,6 +39,7 @@ api_unittest: api_unittest.o
 rule_unittest: rule_unittest.o
 u128_unittest: u128_unittest.o
 basic_get_test: basic_get_test.o
+config_unittest: config_unittest.o
 compose_url_test: compose_url_test.o
 request_unittest: request_unittest.o
 
