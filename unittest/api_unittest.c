@@ -103,8 +103,8 @@ void test_get_action_by_hash() {
 
 void test_get_action_by_addr() {
 
-    int total_actions;
     size_t count = 100;
+    size_t actions_actual_size;
     iotex_st_action_info *actions;
 
     if (!(actions = calloc(sizeof(iotex_st_action_info), count))) {
@@ -112,8 +112,8 @@ void test_get_action_by_addr() {
         UNITTEST_FAIL("calloc");
     }
 
-    UNITTEST_ASSERT_NE(-1, (total_actions = iotex_emb_get_action_by_addr(TEST_ACCOUNT_ADDR, 0, count, actions, count)));
-    fprintf(stdout, "Address: %s, actual actions number: %d\n", TEST_ACCOUNT_ADDR, total_actions);
+    UNITTEST_ASSERT_EQ(0, iotex_emb_get_action_by_addr(TEST_ACCOUNT_ADDR, 0, count, actions, count, &actions_actual_size));
+    fprintf(stdout, "Address: %s, actual actions number: %zu\n", TEST_ACCOUNT_ADDR, actions_actual_size);
     UNITTEST_AUTO_PASS();
 }
 

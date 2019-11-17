@@ -27,14 +27,18 @@ typedef char iotex_t_id[IOTEX_EMB_LIMIT_ID_LEN];
 typedef uint128_t iotex_t_number;
 typedef uint32_t iotex_t_boolean;
 
+typedef enum {
+    IOTEX_E_NOERR,
+    IOTEX_E_VERSION,
+    IOTEX_E_CERT,
+} iotex_em_error;
 
-/* Data type */
+/* Structure for configure cert and api version  */
 typedef struct iotex_st_config {
     uint32_t ver;
     const char *cert_dir;
     const char *cert_file;
 } iotex_st_config;
-
 
 typedef struct {
     iotex_t_account address;
@@ -93,17 +97,71 @@ typedef struct {
     } details;
 } iotex_st_validator;
 
-void iotex_emb_exit();
-int iotex_emb_init(const iotex_st_config *context);
 
+/*
+ * @brief: iotex_emb api initialize, configure cert and api version etc
+ * #config: specify cert file or directory, set NULL use the system default
+ * $return: success return 0, failed return negative error code(iotex_em_error)
+ */
+int iotex_emb_init(const iotex_st_config *config);
+
+/*
+ * @brief: clear api configure
+ */
+void iotex_emb_exit();
+
+/*
+ * @brief: get blockchain metadata
+ * #chain_meta: structure pointer to save blockchain metadata
+ * $return: success return 0, failed return negative error code(iotex_em_error)
+ */
 int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain_meta);
+
+/*
+ * @brief: get account metadata
+ * #account: account encoded address
+ * #meta: structure pointer to save account metadata
+ * $return: success return 0, failed return negative error code(iotex_em_error)
+ */
 int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta);
 
+/*
+ * @brief: get transfer action by block height
+ * #block: block height
+ * #action: structure pointer to iotex_st_action_info, save action information
+ * $return: success return 0, failed return negative error code(iotex_em_error)
+ */
 int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action);
 
+/*
+ * @brief: get action by action hash
+ * #hash: hash of action
+ * #action: structure pointer to iotex_st_action_info, save action information
+ * $return: success return 0, failed return negative error code(iotex_em_error)
+ */
 int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action);
-int iotex_emb_get_action_by_addr(const char *addr, uint32_t start_idx, uint32_t count, iotex_st_action_info *actions, size_t actions_size);
 
+/*
+ * @brief: get actions by address
+ * #addr: encoded address
+ * #start_idx: start index of actions
+ * #count: number of actions to get
+ * #actions: iotex_st_action_info array to save actions list
+ * #max_size: #actions array size
+ * #actual_size: return actions list actual size
+ * $return: success return 0, failed return negative error code(iotex_em_error)
+ */
+int iotex_emb_get_action_by_addr(const char *addr,
+                                 uint32_t start_idx, uint32_t count,
+                                 iotex_st_action_info *actions, size_t max_size, size_t *actual_size);
+
+/*
+ * @brief: get validator members list
+ * #validators: iotex_st_validator array to save validator list
+ * #max_size: #validators array max size
+ * #actual_size: return validator members list actual size
+ * $return: success return 0, failed return negative error code(iotex_em_error)
+ */
 int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, size_t *actual_size);
 
 #ifdef	__cplusplus

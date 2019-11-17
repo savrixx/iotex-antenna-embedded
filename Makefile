@@ -1,6 +1,7 @@
 AR		= $(CROSS_COMPILE)ar
 CC		= $(CROSS_COMPILE)gcc
 CXX		= $(CROSS_COMPILE)g++
+STRIP	= $(CROSS_COMPILE)strip
 CFLAGS	= -Wall -g -fPIC -D_DEBUG_JSON_PARSE
 CXXFLAGS	= -Wall -g -fPIC -D_DEBUG_JSON_PARSE
 LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl
@@ -29,7 +30,6 @@ distclean:
 	make clean -C $(UNITTEST)
 
 release:$(TARGETS)
-	@ls *.so *.a -lh
 	@$(STRIP) libiotexemb.so
 	@$(STRIP) libiotexemb.a
 	@ls *.so *.a -lh
