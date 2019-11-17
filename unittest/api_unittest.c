@@ -145,6 +145,8 @@ void test_get_validators() {
 
 int main(int argc, char **argv) {
 
+    iotex_emb_init(NULL);
+
     test_get_chain_meta();
     test_get_account_meta();
     test_get_transfer_by_block();

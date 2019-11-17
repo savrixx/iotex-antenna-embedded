@@ -4,6 +4,15 @@
 #include <curl/curl.h>
 #include "config.h"
 
+#ifdef __APPLE__
+#define DEF_CA_INFO "/etc/ssl/cert.pem"
+#else
+#define DEF_CA_INFO "/etc/ssl/certs/ca-certificates.crt"
+#endif
+
+#define DEF_CA_PATH "/etc/ssl/certs"
+
+
 
 int main(int argc, char **argv) {
 

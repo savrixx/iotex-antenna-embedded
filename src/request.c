@@ -11,6 +11,7 @@
 #include "debug.h"
 #include "config.h"
 #include "request.h"
+#include "iotex_emb.h"
 
 
 typedef struct {
@@ -25,9 +26,6 @@ typedef struct {
     size_t len;
 } iotex_st_response_data;
 
-
-/* Https api version */
-static uint32_t __g_version = 1;
 
 static const iotex_st_request_conf __g_req_configs[] = {
     {
@@ -79,14 +77,12 @@ static const iotex_st_request_conf __g_req_configs[] = {
     }
 };
 
-
 /*
  * @brief: free iotex_st_response_data
  */
 static void _free_response_data(iotex_st_response_data *res) {
 
     if (!res || !res->data) {
-
         return;
     }
 
@@ -111,7 +107,6 @@ static size_t _curl_write_callback(char *ptr, size_t size, size_t nmemb, void *u
         res->data = 0;
 
         if (!(res->data = malloc(new_len)))  {
-
             __ERROR_MSG__("malloc");
             return 0;
         }
@@ -119,7 +114,6 @@ static size_t _curl_write_callback(char *ptr, size_t size, size_t nmemb, void *u
     else {
 
         if (!(new_ptr = realloc(res->data, res->len + new_len))) {
-
             __ERROR_MSG__("realloc");
             _free_response_data(res);
             return 0;
@@ -153,6 +147,7 @@ char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...)
     va_list ap;
     size_t path_len;
     char *url_tail = NULL;
+    iotex_st_config config = get_config();
     const iotex_st_request_conf *conf = NULL;
 
     /* Get request config */
@@ -173,7 +168,7 @@ char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...)
 
     /* Copy base url and version */
     memset(url, 0, url_max_size);
-    snprintf(url, url_max_size, IOTEX_EMB_BASE_URL,  __g_version);
+    snprintf(url, url_max_size, IOTEX_EMB_BASE_URL, config.ver);
 
     /* Compose request url, without args */
     for (i = 0, url_tail = url + strlen(url); conf->paths[i]; i++) {
@@ -220,10 +215,8 @@ char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...)
  *
  * TODO:
  * 1. add meaningful error code
- * 2. certs path and info configurable
- * 3. certs path and info auto search
- * 4. add zero copy version ? (don't forget release response)
- * 5. add two-way authentication support
+ * 2. add zero copy version ? (don't forget release response)
+ * 3. add two-way authentication support
  */
 int req_send_request(const char *request, char *response, size_t response_max_size) {
 
@@ -233,6 +226,7 @@ int req_send_request(const char *request, char *response, size_t response_max_si
     CURL *curl;
     CURLcode ret;
     iotex_st_response_data res = {};
+    iotex_st_config config = get_config();
 
     if (!(curl = curl_easy_init())) {
 
@@ -243,8 +237,8 @@ int req_send_request(const char *request, char *response, size_t response_max_si
     curl_easy_setopt(curl, CURLOPT_URL, request);
 
     /* Set the file with the certs vaildating the server */
-    curl_easy_setopt(curl, CURLOPT_CAINFO, DEF_CA_INFO);
-    curl_easy_setopt(curl, CURLOPT_CAPATH, DEF_CA_PATH);
+    curl_easy_setopt(curl, CURLOPT_CAINFO, config.cert_file);
+    curl_easy_setopt(curl, CURLOPT_CAPATH, config.cert_dir);
 
     /* Disconnect if we can't validate server's cert */
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);

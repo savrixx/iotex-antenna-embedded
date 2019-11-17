@@ -5,6 +5,7 @@
 #include "test_config.h"
 #include "../src/debug.h"
 #include "../src/request.h"
+#include "../src/iotex_emb.h"
 
 
 #define MAX_RESPONSE_LEN (16 * 1024)
@@ -115,6 +116,8 @@ void test_get_member_validators() {
 
 
 int main(int argc, char **argv) {
+
+    iotex_emb_init(NULL);
 
     test_get_chainmeta();
     test_get_account_info(TEST_ACCOUNT_ADDR);

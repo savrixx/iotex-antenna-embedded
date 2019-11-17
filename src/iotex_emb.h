@@ -8,9 +8,17 @@ extern "C" {
 
 #include <stdint.h>
 #include "u128.h"
-#include "config.h"
 
-/* Typedef */
+
+/* Data type length */
+#define IOTEX_EMB_LIMIT_ACCOUNT_LEN 42
+#define IOTEX_EMB_LIMIT_TIME_LEN 21
+#define IOTEX_EMB_LIMIT_HASH_LEN 65
+#define IOTEX_EMB_LIMIT_KEY_LEN 89
+#define IOTEX_EMB_LIMIT_ID_LEN 16
+
+
+/* Basic type typedef */
 typedef char iotex_t_account[IOTEX_EMB_LIMIT_ACCOUNT_LEN];
 typedef char iotex_t_hash[IOTEX_EMB_LIMIT_HASH_LEN];
 typedef char iotex_t_time[IOTEX_EMB_LIMIT_TIME_LEN];
@@ -20,6 +28,14 @@ typedef uint128_t iotex_t_number;
 typedef uint32_t iotex_t_boolean;
 
 
+/* Data type */
+typedef struct iotex_st_config {
+    uint32_t ver;
+    const char *cert_dir;
+    const char *cert_file;
+} iotex_st_config;
+
+
 typedef struct {
     iotex_t_account address;
     iotex_t_number balance;
@@ -27,7 +43,6 @@ typedef struct {
     iotex_t_number pendingNonce;
     iotex_t_number numActions;
 } iotex_st_account_meta;
-
 
 typedef struct {
     iotex_t_number height;
@@ -40,7 +55,6 @@ typedef struct {
     } epoch;
     double tpsFloat;
 } iotex_st_chain_meta;
-
 
 typedef struct iotex_st_action_info {
     struct {
@@ -66,7 +80,6 @@ typedef struct iotex_st_action_info {
     iotex_t_time timestamp;
 } iotex_st_action_info;
 
-
 typedef struct {
     iotex_t_id id;
     iotex_t_boolean status;
@@ -80,6 +93,8 @@ typedef struct {
     } details;
 } iotex_st_validator;
 
+void iotex_emb_exit();
+int iotex_emb_init(const iotex_st_config *context);
 
 int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain_meta);
 int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta);

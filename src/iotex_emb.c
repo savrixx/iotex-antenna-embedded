@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "u128.h"
 #include "rule.h"
 #include "parse.h"
@@ -7,6 +8,15 @@
 #include "response.h"
 #include "iotex_emb.h"
 
+int iotex_emb_init(const iotex_st_config *context) {
+
+    return init_config(context);
+}
+
+void iotex_emb_exit() {
+
+    clear_config();
+}
 
 int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain) {
 
@@ -39,7 +49,6 @@ int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain) {
     return res_get_data(url, chain_meta_rules);
 }
 
-
 int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta) {
 
     json_parse_rule account_meta[] = {
@@ -68,7 +77,6 @@ int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta)
     return res_get_data(url, account_rules);
 }
 
-
 int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action) {
 
     char url[IOTEX_EMB_MAX_URL_LEN];
@@ -84,7 +92,6 @@ int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action) 
     return res_get_actions(url, action, 1) == 1;
 }
 
-
 int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action) {
 
     char url[IOTEX_EMB_MAX_URL_LEN];
@@ -98,7 +105,6 @@ int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action)
     return res_get_actions(url, action, 1) == 1;
 }
 
-
 int iotex_emb_get_action_by_addr(const char *addr, uint32_t start_idx, uint32_t count, iotex_st_action_info *actions, size_t actions_size) {
 
     char url[IOTEX_EMB_MAX_URL_LEN];
@@ -111,7 +117,6 @@ int iotex_emb_get_action_by_addr(const char *addr, uint32_t start_idx, uint32_t 
 
     return res_get_actions(url, actions, actions_size);
 }
-
 
 int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, size_t *actual_size) {
 
