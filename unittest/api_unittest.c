@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "debug.h"
 #include "config.h"
 #include "unittest.h"
@@ -119,14 +120,22 @@ void test_get_action_by_addr() {
 
 void test_get_validators() {
 
+    size_t validators_max_size = 100;
     size_t validators_actual_size, i;
-    iotex_st_validator validators[100], *m;
+    iotex_st_validator *validators, *m;
 
     char locktime[UINT128_RAW_MAX_LEN];
     char annual_reward[UINT128_RAW_MAX_LEN];
     char minimum_amount[UINT128_RAW_MAX_LEN];
 
-    UNITTEST_ASSERT_EQ(0, iotex_emb_get_validators(validators, 100, &validators_actual_size));
+    fprintf(stdout, "Size: %d, %d\n", sizeof(json_parse_rule), sizeof(iotex_st_validator));
+
+    if (!(validators = calloc(sizeof(iotex_st_validator), validators_max_size))) {
+
+        UNITTEST_FAIL("calloc");
+    }
+
+    UNITTEST_ASSERT_EQ(0, iotex_emb_get_validators(validators, validators_max_size, &validators_actual_size));
 
     fprintf(stdout, "Validators actual size: %zu, first id: %s, last id: %s\n",
             validators_actual_size, validators[0].id, validators[validators_actual_size - 1].id);
@@ -140,6 +149,7 @@ void test_get_validators() {
                 u1282str(m->details.minimum_amount, minimum_amount, sizeof(minimum_amount)));
     }
 
+    free(validators);
     UNITTEST_AUTO_PASS();
 }
 
@@ -153,7 +163,7 @@ int main(int argc, char **argv) {
 
     test_get_action_by_hash();
     test_get_action_by_addr();
-
     test_get_validators();
+
     return 0;
 }
