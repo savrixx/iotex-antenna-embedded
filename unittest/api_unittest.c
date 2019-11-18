@@ -128,8 +128,6 @@ void test_get_validators() {
     char annual_reward[UINT128_RAW_MAX_LEN];
     char minimum_amount[UINT128_RAW_MAX_LEN];
 
-    fprintf(stdout, "Size: %d, %d\n", sizeof(json_parse_rule), sizeof(iotex_st_validator));
-
     if (!(validators = calloc(sizeof(iotex_st_validator), validators_max_size))) {
 
         UNITTEST_FAIL("calloc");

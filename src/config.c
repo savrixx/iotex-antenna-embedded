@@ -89,8 +89,8 @@ void print_config() {
 
     fprintf(stdout,
             "API Version: %d\n"
-            "Cert dir: %s\n"
-            "Cert file: %s\n", context.ver, context.cert_dir, context.cert_file);
+            "Cert dir: %s, Cert file: %s\n",
+            context.ver, context.cert_dir, context.cert_file);
 }
 
 void clear_config(void) {
@@ -107,6 +107,11 @@ int init_config(const struct iotex_st_config *config) {
 
         /* Use specified context */
         memcpy(&__g_config, config, sizeof(__g_config));
+
+        if (!__g_config.ver) {
+
+            __g_config.ver = 1;
+        }
 
         if (!__g_config.cert_dir) {
 
