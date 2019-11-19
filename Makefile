@@ -14,9 +14,10 @@ OBJECTS	= $(SOURCES:.c=.o)
 TARGETS = libiotexemb.a libiotexemb.so
 
 SCRIPTS=scripts
+EXAMPLE=example
 UNITTEST=unittest
 
-.PHONY:all clean distclean test install help style statistics no_int128 release
+.PHONY:all clean distclean test example install help style statistics no_int128 release
 .SILENT: clean
 
 all:$(TARGETS)
@@ -34,8 +35,11 @@ release:$(TARGETS)
 	@$(STRIP) libiotexemb.a
 	@ls *.so *.a -lh
 
-test:libiotexemb.so
+test:$(TARGETS)
 	make -C $(UNITTEST)
+
+example:$(TARGETS)
+	make -C $(EXAMPLE)
 
 unittest:test
 	make -C $(SCRIPTS)

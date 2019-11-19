@@ -89,7 +89,7 @@ int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action) 
         return -1;
     }
 
-    return res_get_actions(url, action, 1) == 1;
+    return res_get_actions(url, action, 1) == 1 ? 0 : -1;
 }
 
 int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action) {
@@ -102,7 +102,7 @@ int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action)
         return -1;
     }
 
-    return res_get_actions(url, action, 1) == 1;
+    return res_get_actions(url, action, 1) == 1 ? 0 : -1;
 }
 
 int iotex_emb_get_action_by_addr(const char *addr,

@@ -44,7 +44,7 @@ void test_get_account_meta() {
 void test_get_transfer_by_block() {
 
     iotex_st_action_info action_info;
-    UNITTEST_ASSERT_EQ(1, iotex_emb_get_transfer_block(construct_u128(TEST_TRANSFERS_BLOCK), &action_info));
+    UNITTEST_ASSERT_EQ(0, iotex_emb_get_transfer_block(construct_u128(TEST_TRANSFERS_BLOCK), &action_info));
 
     /* iotex_st_action_info */
     UNITTEST_ASSERT_STR_EQ(action_info.actHash, TEST_TRANSFERS_BLOCK_ACTHASH, strlen(TEST_TRANSFERS_BLOCK_ACTHASH));
@@ -74,7 +74,7 @@ void test_get_transfer_by_block() {
 void test_get_action_by_hash() {
 
     iotex_st_action_info action_info;
-    UNITTEST_ASSERT_EQ(1, iotex_emb_get_action_by_hash(TEST_ACTION_HASH, &action_info));
+    UNITTEST_ASSERT_EQ(0, iotex_emb_get_action_by_hash(TEST_ACTION_HASH, &action_info));
 
     /* iotex_st_action_info */
     UNITTEST_ASSERT_STR_EQ(action_info.actHash, TEST_ACTION_HASH, strlen(action_info.actHash));

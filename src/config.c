@@ -153,6 +153,10 @@ int init_config(const struct iotex_st_config *config) {
         return -1;
     }
 
-    print_config();
+    if (!config) {
+
+        print_config();
+    }
+
     return 0;
 }
