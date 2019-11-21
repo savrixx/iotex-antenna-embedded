@@ -104,6 +104,7 @@ int main(int argc, char **argv) {
 
 
     fprintf(stdout, "[");
+
     for (i = 0; i < test_times; i++) {
 
         fprintf(stdout, "{");
@@ -126,5 +127,6 @@ int main(int argc, char **argv) {
 
         fflush(stdout);
     }
+
     fprintf(stdout, "]\n");
 }

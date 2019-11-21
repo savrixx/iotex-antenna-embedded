@@ -23,10 +23,6 @@ if __name__ == "__main__":
                 if record[func] == -2:
                     malloc_failed[func] = malloc_failed[func] + 1
 
-    for func in funcs:
-        failed[func] = failed[func] / len(records) * 100
-        malloc_failed[func] = malloc_failed[func] / len(records) * 100
-
     print("Total: {}".format(len(records)))
-    print("F", failed)
-    print("M", malloc_failed)
+    for func in funcs:
+        print("API: {}, failed:{}, malloc failed:{}".format(func, failed[func], malloc_failed[func]))

@@ -5,7 +5,7 @@ LDSHFLAGS	= -rdynamic -shared
 ARFLAGS		= rcv
 CFLAGS		= -Wall -g -fPIC -I../src
 CXXFLAGS	= -Wall -g -fPIC -I../src
-LDFLAGS		= -L.. -liotexemb -lcurl
+LDFLAGS		= -L.. -liotexemb -lcurl -L.. -ltrezor-crypto
 
 SRCS=$(wildcard *.c) $(wildcard *.cpp)
 OBJDIR=../objs
@@ -40,6 +40,7 @@ api_unittest: api_unittest.o
 rule_unittest: rule_unittest.o
 u128_unittest: u128_unittest.o
 parse_unittest: parse_unittest.o
+signer_unittest: signer_unittest.o
 config_unittest: config_unittest.o
 compose_url_test: compose_url_test.o
 request_unittest: request_unittest.o
