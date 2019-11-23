@@ -36,6 +36,7 @@ pressure_test: pressure_test.o
 basic_get_test: basic_get_test.o
 
 # Unittest 
+pb_unittest: pb_unittest.o
 api_unittest: api_unittest.o
 rule_unittest: rule_unittest.o
 u128_unittest: u128_unittest.o
