@@ -1,5 +1,6 @@
-#include "pb_pack.h"
 #include <string.h>
+#include <endian.h>
+#include "pb_pack.h"
 
 
 int pb_pack_varint(const pb_st_item *item, uint8_t *buffer) {
@@ -26,14 +27,27 @@ int pb_pack_varint(const pb_st_item *item, uint8_t *buffer) {
 
 int pb_pack_64bit(const pb_st_item *item, uint8_t *buffer) {
 
+    uint8_t *key = buffer;
+    uint8_t *value = buffer + 1;
+    uint64_t fixed64 = htole64(*((uint64_t *)item->data));
 
-    return 0;
+    *key = PB_KEY(item->field, PB_WT_64);
+    memcpy(value, &fixed64, sizeof(fixed64));
+
+    return sizeof(fixed64) + 1;
 }
 
 
 int pb_pack_32bit(const pb_st_item *item, uint8_t *buffer) {
 
-    return 0;
+    uint8_t *key = buffer;
+    uint8_t *value = buffer + 1;
+    uint32_t fixed32 = htole32(*((uint32_t *)item->data));
+
+    *key = PB_KEY(item->field, PB_WT_32);
+    memcpy(value, &fixed32, sizeof(fixed32));
+
+    return sizeof(fixed32) + 1;
 }
 
 

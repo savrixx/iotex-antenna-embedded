@@ -12,7 +12,7 @@ typedef enum {
     PB_WT_VARINT = 0,
     PB_WT_64 = 1,
     PB_WT_LD = 2,
-    PB_WD_32 = 5
+    PB_WT_32 = 5
 } pb_em_wtype;
 
 typedef enum {
@@ -29,7 +29,7 @@ typedef struct {
     void *data;
 } pb_st_item;
 
-#define PB_MAX_TYPE (PB_WD_32)
+#define PB_MAX_TYPE (PB_WT_32)
 #define PB_VARINT_MASK 0x7f
 #define PB_VARINT_MORE 0x80
 #define PB_KEY(field, type) (((field & 0xf) << 3) | ((type) & 0x7))
