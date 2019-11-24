@@ -53,39 +53,68 @@ int pb_pack_32bit(const pb_st_item *item, uint8_t *buffer) {
 
 int pb_pack_ld(const pb_st_item *item, uint8_t *buffer) {
 
-    return 0;
+    uint8_t *key = buffer;
+    uint8_t *value = buffer + 2;
+    uint8_t *length = buffer + 1;
+
+    *length = item->length;
+    *key = PB_KEY(item->field, PB_WT_LD);
+    memcpy(value, item->data, item->length);
+
+    return item->length + 2;
 }
 
 
 int pb_pack(const pb_st_item *messages, size_t len, uint8_t *buffer, size_t size) {
 
     int i = 0;
+    int emb_msg_len;
     int packed_len = 0;
+    uint8_t write_type = 0;
     PB_SERIALIZE_FUNC serialize = NULL;
-    static const PB_SERIALIZE_FUNC serialize_funcs[] = {
+    static const PB_SERIALIZE_FUNC serialize_funcs[PB_MAX_TYPE + 1] = {
 
         pb_pack_varint,
         pb_pack_64bit,
         pb_pack_ld,
         NULL,
         NULL,
-        pb_pack_32bit
+        pb_pack_32bit,
     };
 
     for (i = 0; i < len; i++, messages++) {
 
-        if (messages->type > PB_MAX_TYPE) {
+        write_type = PB_GET_WTYPE(messages->type);
+
+        if (write_type > PB_MAX_TYPE) {
 
             return -PB_TYPE_ERR;
         }
 
         /* Skip deprecated type and optional field */
-        if (!(serialize = serialize_funcs[messages->type]) || !messages->data) {
+        if (!(serialize = serialize_funcs[write_type]) || !messages->data) {
 
             continue;
         }
 
-        packed_len += serialize(messages, buffer + packed_len);
+        /* Pack embedded message */
+        if (IS_EMB_MSG(messages->type)) {
+
+            emb_msg_len = pb_pack((const pb_st_item *)messages->data, messages->length, buffer + packed_len + 2, size - packed_len - 2);
+
+            if (emb_msg_len < 0) {
+
+                return -PB_PEMB_ERR;
+            }
+
+            buffer[packed_len] = PB_KEY(messages->field, PB_WT_LD);
+            buffer[packed_len + 1] = emb_msg_len;
+            packed_len += emb_msg_len + 2;
+        }
+        else {
+
+            packed_len += serialize(messages, buffer + packed_len);
+        }
 
         /* Buffer to short */
         if (packed_len >= size) {
