@@ -19,15 +19,15 @@ typedef enum {
     REQ_GET_MEMBER_VALIDATORS,
     REQ_GET_MEMBER_DELEGATIONS,
 
-    REQ_SEND_SINGLE_ACTION_BYTES,
+    REQ_SEND_SIGNED_ACTION_BYTES,
 
     REQ_TAIL_NONE
 } iotex_em_request;
 
 
-
 char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...);
-int req_send_request(const char *request, char *response, size_t response_max_size);
+int req_get_request(const char *request, char *response, size_t response_max_size);
+int req_post_request(const char *request, char *response, size_t response_max_size);
 
 #ifdef __cplusplus
 }

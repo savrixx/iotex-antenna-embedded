@@ -32,8 +32,8 @@ no_int128:
 	@make clean && make CFLAGS="-Wall -g -fPIC -I../src -D_NO_128INT_"
 
 # Test
+curl_test: curl_test.o
 pressure_test: pressure_test.o
-basic_get_test: basic_get_test.o
 
 # Unittest 
 pb_unittest: pb_unittest.o

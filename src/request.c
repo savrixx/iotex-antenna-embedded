@@ -68,8 +68,9 @@ static const iotex_st_request_conf __g_req_configs[] = {
     },
 
     {
-        REQ_SEND_SINGLE_ACTION_BYTES,
-        {"actionbytes", "signedbytes", NULL}
+        REQ_SEND_SIGNED_ACTION_BYTES,
+        {"actionbytes", NULL},
+        "%s"
     },
 
     {
@@ -211,6 +212,7 @@ char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...)
  * #url: request url, it should be composed with url and data
  * #response: store request response data
  * #response_max_size: #response buffer max len
+ * #is_post: set this indicate this is a post request
  * $return: successed return 0, failed return negative error code
  *
  * TODO:
@@ -218,7 +220,7 @@ char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...)
  * 2. add zero copy version ? (don't forget release response)
  * 3. add two-way authentication support
  */
-int req_send_request(const char *request, char *response, size_t response_max_size) {
+static int req_basic_request(const char *request, char *response, size_t response_max_size, uint32_t is_post) {
 
     assert(request != NULL);
     assert(response != NULL);
@@ -229,9 +231,13 @@ int req_send_request(const char *request, char *response, size_t response_max_si
     iotex_st_config config = get_config();
 
     if (!(curl = curl_easy_init())) {
-
         __WARN_MSG__("curl_easy_init");
         return -1;
+    }
+
+    if (is_post) {
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, 0L);
     }
 
     curl_easy_setopt(curl, CURLOPT_URL, request);
@@ -251,14 +257,12 @@ int req_send_request(const char *request, char *response, size_t response_max_si
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _curl_write_callback);
 
     if ((ret = curl_easy_perform(curl)) != CURLE_OK) {
-
         __WARN_MSG__(curl_easy_strerror(ret));
         curl_easy_cleanup(curl);
         return -1;
     }
 
     if (res.len + 1 > response_max_size) {
-
         _free_response_data(&res);
         curl_easy_cleanup(curl);
         return -1;
@@ -271,4 +275,14 @@ int req_send_request(const char *request, char *response, size_t response_max_si
     _free_response_data(&res);
     curl_easy_cleanup(curl);
     return 0;
+}
+
+int req_get_request(const char *request, char *response, size_t response_max_size) {
+
+    return req_basic_request(request, response, response_max_size, 0);
+}
+
+int req_post_request(const char *request, char *response, size_t response_max_size) {
+
+    return req_basic_request(request, response, response_max_size, 1);
 }

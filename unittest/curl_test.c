@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 
     if (argc < 2) {
 
-        fprintf(stdout, "Usage: %s <url> [header_file_path]\n", argv[0]);
+        fprintf(stdout, "Usage: %s <url> [enable_post] [header_file_path]\n", argv[0]);
         return -1;
     }
 
@@ -26,7 +26,8 @@ int main(int argc, char **argv) {
     CURLcode res;
     FILE *header_file = NULL;
     const char *input_url = argv[1];
-    const char *header_file_path = argc >= 3 ? argv[2] : NULL;
+    int enable_post = (argc >= 3) ? 1 : 0;
+    const char *header_file_path = (argc >= 4) ? argv[3] : NULL;
 
     if (header_file_path) {
 
@@ -47,6 +48,12 @@ int main(int argc, char **argv) {
         if (header_file) {
 
             curl_easy_setopt(curl, CURLOPT_HEADERDATA, header_file);
+        }
+
+        if (enable_post) {
+
+            curl_easy_setopt(curl, CURLOPT_POST, 1L);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, 0L);
         }
 
         /* Set the file with the certs vaildating the server */

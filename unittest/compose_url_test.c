@@ -93,6 +93,26 @@ void test_transfers_by_block() {
 }
 
 
+void test_send_signed_action_bytes() {
+
+    const char *signed_action_bytes = "0a4c0801107b18f8062203393939523e0a033435361"
+                                      "229696f313837777a703038766e686a6a706b79646e"
+                                      "723937716c68386b683064706b6b797466616d386a1"
+                                      "a0c68656c6c6f20776f726c64211241044e18306ae9"
+                                      "ef4ec9d07bf6e705442d4d1a75e6cdf750330ca2d88"
+                                      "0f2cc54607c9c33deb9eae9c06e06e04fe9ce3d4396"
+                                      "2cc67d5aa34fbeb71270d4bad3d648d91a41555cc8a"
+                                      "f4181bf85c044c3201462eeeb95374f78aa48c67b87"
+                                      "510ee63d5e502372e53082f03e9a11c1e351de539ce"
+                                      "df85d8dff87de9d003cb9f92243541541a000";
+
+    UNITTEST_ASSERT_NE(NULL, req_compose_url(url, sizeof(url), REQ_SEND_SIGNED_ACTION_BYTES, signed_action_bytes));
+    UNITTEST_ASSERT_STR_EQ(url + strlen(url) - strlen(signed_action_bytes), signed_action_bytes, strlen(signed_action_bytes));
+
+    UNITTEST_AUTO_PASS();
+}
+
+
 int main(int argc, char **argv) {
 
 
@@ -101,6 +121,6 @@ int main(int argc, char **argv) {
     test_get_action_by_hash();
     test_get_action_by_addr();
     test_transfers_by_block();
-
+    test_send_signed_action_bytes();
     return 0;
 }

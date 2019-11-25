@@ -26,7 +26,7 @@ int res_get_data(const char *request, json_parse_rule *rules) {
     __INFO_MSG__(request);
 #endif
 
-    if (req_send_request(request, response, IOTEX_EBM_MAX_RES_LEN) != 0) {
+    if (req_get_request(request, response, IOTEX_EBM_MAX_RES_LEN) != 0) {
 
         free(response);
         return -1;
