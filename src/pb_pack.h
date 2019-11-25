@@ -23,7 +23,6 @@ typedef enum {
     PB_PEMB_ERR
 } pb_em_error;
 
-
 /* NULL means it's an optional field */
 typedef struct {
     /* write type one of pb_em_wtype or PB_EMBMSG_MASK | PB_WT_LD */
@@ -46,9 +45,9 @@ typedef struct {
 
 #define PB_EMBMSG_MASK 0x80
 #define PB_GET_WTYPE(x) ((x) & 0x7)
+#define PB_GET_FIELD(x) (((x) & 0x78) >> 3)
+#define PB_SET_KEY(field, type) (((field & 0xf) << 3) | ((type) & 0x7))
 #define IS_EMB_MSG(x) (PB_GET_WTYPE(x) == PB_WT_LD && ((x) & (PB_EMBMSG_MASK)))
-
-#define PB_KEY(field, type) (((field & 0xf) << 3) | ((type) & 0x7))
 
 
 typedef int (*PB_SERIALIZE_FUNC)(const pb_st_item *item, uint8_t *buffer);

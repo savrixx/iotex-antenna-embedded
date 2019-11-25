@@ -34,7 +34,7 @@ void test_pack(const char *test_name, pb_em_wtype test_type,
 
         single.data = multi[i].data;
         pb_len = pb_pack(&single, 1, pb_buffer, sizeof(pb_buffer));
-        hex_len = signer_hex(pb_buffer, pb_len, serialize_hex, sizeof(serialize_hex));
+        hex_len = signer_hex2str(pb_buffer, pb_len, serialize_hex, sizeof(serialize_hex));
 
         UNITTEST_ASSERT_NE(-1, pb_len);
         UNITTEST_ASSERT_NE(-1, hex_len);
@@ -43,7 +43,7 @@ void test_pack(const char *test_name, pb_em_wtype test_type,
 
 
     pb_len = pb_pack(multi, test_data_size, pb_buffer, sizeof(pb_buffer));
-    hex_len = signer_hex(pb_buffer, pb_len, serialize_hex, sizeof(serialize_hex));
+    hex_len = signer_hex2str(pb_buffer, pb_len, serialize_hex, sizeof(serialize_hex));
 
     UNITTEST_ASSERT_NE(-1, pb_len);
     UNITTEST_ASSERT_NE(-1, hex_len);
@@ -171,7 +171,7 @@ void test_pack_embedded() {
     };
 
     pb_len = pb_pack(messages, UNITTEST_GET_ARRAY_SIZE(messages), pb_buffer, sizeof(pb_buffer));
-    hex_len = signer_hex(pb_buffer, pb_len, serialize_hex, sizeof(serialize_hex));
+    hex_len = signer_hex2str(pb_buffer, pb_len, serialize_hex, sizeof(serialize_hex));
     UNITTEST_ASSERT_STR_EQ(serialize_hex, "08d8041578563412192143658790badcfe2225746869732069732061206d736720696e636c75646520616e20656d626564646564206d73672a2a58ac02652143658769efcdab907856341272177468697320697320616e20656d626564646564206d7367", hex_len);
 
     UNITTEST_AUTO_PASS();

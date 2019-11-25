@@ -7,6 +7,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <stddef.h>
 
 
 #define SIG_HASH_SIZE 32
@@ -14,9 +15,8 @@ extern "C" {
 #define SIG_PUBLIC_KEY_SIZE 65
 #define SIG_SIGNATURE_SIZE 65
 
-
-int signer_parse_hex(const char *str, uint8_t *hex, size_t size);
-int signer_hex(const uint8_t *hex, size_t hex_size, char *str, size_t str_size);
+int signer_str2hex(const char *str, uint8_t *hex, size_t size);
+int signer_hex2str(const uint8_t *hex, size_t hex_size, char *str, size_t str_size);
 
 void signer_get_hash(const uint8_t *data, size_t size, uint8_t hash[SIG_HASH_SIZE]);
 void signer_get_public_key(const uint8_t private_key[SIG_PRIVATE_KEY_SIZE], uint8_t public_key[SIG_PUBLIC_KEY_SIZE]);

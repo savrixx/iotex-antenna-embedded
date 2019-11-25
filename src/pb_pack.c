@@ -9,7 +9,7 @@ int pb_pack_varint(const pb_st_item *item, uint8_t *buffer) {
     uint8_t *value = buffer + 1;
     uint64_t varint = *((uint64_t *)item->data);
 
-    *key = PB_KEY(item->field, PB_WT_VARINT);
+    *key = PB_SET_KEY(item->field, PB_WT_VARINT);
 
     do {
 
@@ -31,7 +31,7 @@ int pb_pack_64bit(const pb_st_item *item, uint8_t *buffer) {
     uint8_t *value = buffer + 1;
     uint64_t fixed64 = htole64(*((uint64_t *)item->data));
 
-    *key = PB_KEY(item->field, PB_WT_64);
+    *key = PB_SET_KEY(item->field, PB_WT_64);
     memcpy(value, &fixed64, sizeof(fixed64));
 
     return sizeof(fixed64) + 1;
@@ -44,7 +44,7 @@ int pb_pack_32bit(const pb_st_item *item, uint8_t *buffer) {
     uint8_t *value = buffer + 1;
     uint32_t fixed32 = htole32(*((uint32_t *)item->data));
 
-    *key = PB_KEY(item->field, PB_WT_32);
+    *key = PB_SET_KEY(item->field, PB_WT_32);
     memcpy(value, &fixed32, sizeof(fixed32));
 
     return sizeof(fixed32) + 1;
@@ -58,7 +58,7 @@ int pb_pack_ld(const pb_st_item *item, uint8_t *buffer) {
     uint8_t *length = buffer + 1;
 
     *length = item->length;
-    *key = PB_KEY(item->field, PB_WT_LD);
+    *key = PB_SET_KEY(item->field, PB_WT_LD);
     memcpy(value, item->data, item->length);
 
     return item->length + 2;
@@ -107,7 +107,7 @@ int pb_pack(const pb_st_item *messages, size_t len, uint8_t *buffer, size_t size
                 return -PB_PEMB_ERR;
             }
 
-            buffer[packed_len] = PB_KEY(messages->field, PB_WT_LD);
+            buffer[packed_len] = PB_SET_KEY(messages->field, PB_WT_LD);
             buffer[packed_len + 1] = emb_msg_len;
             packed_len += emb_msg_len + 2;
         }

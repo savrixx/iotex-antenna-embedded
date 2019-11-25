@@ -26,7 +26,7 @@ static uint8_t value(uint8_t c, uint32_t *ret) {
     return 0;
 }
 
-int signer_hex(const uint8_t *hex, size_t hex_size, char *str, size_t str_size) {
+int signer_hex2str(const uint8_t *hex, size_t hex_size, char *str, size_t str_size) {
 
     static const char hexmap[] = {
         '0', '1', '2', '3', '4', '5', '6', '7',
@@ -50,7 +50,7 @@ int signer_hex(const uint8_t *hex, size_t hex_size, char *str, size_t str_size) 
 }
 
 
-int signer_parse_hex(const char *str, uint8_t *hex, size_t size) {
+int signer_str2hex(const char *str, uint8_t *hex, size_t size) {
 
     size_t cur = 0;
     uint32_t valid;

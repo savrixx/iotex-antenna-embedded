@@ -20,17 +20,17 @@ void test_hex_parse() {
 
     for (i = 0; str[i]; i++) {
 
-        hex_len = signer_parse_hex(str[i], hex, sizeof(hex));
+        hex_len = signer_str2hex(str[i], hex, sizeof(hex));
         UNITTEST_ASSERT_NE(hex_len, -1);
 
-        str_len = signer_hex(hex, hex_len, hex_str, sizeof(hex_str));
+        str_len = signer_hex2str(hex, hex_len, hex_str, sizeof(hex_str));
         UNITTEST_ASSERT_NE(str_len, -1);
 
         UNITTEST_ASSERT_EQ(str_len, strlen(str[i]));
         UNITTEST_ASSERT_STR_EQ(str[i], hex_str, str_len);
     }
 
-    UNITTEST_ASSERT_EQ(-1, signer_parse_hex("1212 s!@", hex, sizeof(hex)));
+    UNITTEST_ASSERT_EQ(-1, signer_str2hex("1212 s!@", hex, sizeof(hex)));
     UNITTEST_AUTO_PASS();
 }
 
