@@ -1,11 +1,14 @@
 #include <assert.h>
 #include "u128.h"
 #include "rule.h"
+#include "debug.h"
 #include "parse.h"
 #include "debug.h"
 #include "config.h"
+#include "signer.h"
 #include "request.h"
 #include "response.h"
+#include "pb_proto.h"
 #include "iotex_emb.h"
 
 int iotex_emb_init(const iotex_st_config *config) {
@@ -169,4 +172,43 @@ int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, si
     }
 
     return res_get_data(url, &rule);
+}
+
+int iotex_emb_transfer(const iotex_st_transfer *transfer, iotex_t_hash hash) {
+
+
+    if (!transfer) {
+
+        return -1;
+    }
+
+    if (!transfer->privateKey) {
+
+        return -1;
+    }
+
+    int action_bytes_len;
+    char url[IOTEX_EMB_MAX_URL_LEN];
+    uint8_t action_bytes[IOTEX_EMB_MAX_URL_LEN];
+    char action_bytes_str[IOTEX_EMB_MAX_URL_LEN] = {0};
+
+    /* Generate tx action bytes */
+    if ((action_bytes_len = proto_gen_tx_action(transfer, action_bytes, sizeof(action_bytes), transfer->privateKey)) <= 0) {
+
+        return -1;
+    }
+
+    /* Convert action bytes to string */
+    if (signer_hex2str(action_bytes, action_bytes_len, action_bytes_str, sizeof(action_bytes_str)) < 0) {
+
+        return -1;
+    }
+
+    /* Compose url*/
+    if (!req_compose_url(url, sizeof(url), REQ_SEND_SIGNED_ACTION_BYTES, action_bytes_str)) {
+
+        return -1;
+    }
+
+    return res_get_hash(url, hash, IOTEX_EMB_LIMIT_HASH_LEN);
 }

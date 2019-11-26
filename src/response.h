@@ -9,6 +9,7 @@ extern "C" {
 struct iotex_st_action_info;
 
 int res_get_data(const char *request, json_parse_rule *rules);
+int res_get_hash(const char *request, char *hash, size_t max_size);
 int res_get_actions(const char *request, struct iotex_st_action_info *actions, size_t max_size);
 
 #ifdef __cplusplus

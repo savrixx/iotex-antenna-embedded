@@ -3,6 +3,7 @@
 #include "debug.h"
 #include "parse.h"
 #include "config.h"
+#include "signer.h"
 #include "request.h"
 #include "response.h"
 #include "iotex_emb.h"
@@ -44,6 +45,38 @@ int res_get_data(const char *request, json_parse_rule *rules) {
 
     free(response);
     return 0;
+}
+
+int res_get_hash(const char *request, char *hash, size_t max_size) {
+
+    char *response = NULL;
+
+    if ((response = malloc(IOTEX_EBM_MAX_RES_LEN)) == NULL) {
+
+        return -1;
+    }
+
+#ifdef _DEBUG_HTTP_
+    __INFO_MSG__(request);
+#endif
+
+    if (req_post_request(request, response, IOTEX_EBM_MAX_RES_LEN) != 0) {
+
+        free(response);
+        return -1;
+    }
+
+#ifdef _DEBUG_HTTP_
+    __INFO_MSG__(response);
+#endif
+
+    __INFO_MSG__(request);
+    __INFO_MSG__(response);
+
+    /* TODO: check result get action hash */
+
+    free(response);
+    return ;
 }
 
 

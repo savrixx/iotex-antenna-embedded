@@ -3,6 +3,7 @@
 #include "../src/debug.h"
 #include "../src/signer.h"
 #include "../src/pb_proto.h"
+#include "../src/iotex_emb.h"
 
 
 void test_transfer_action() {
@@ -21,7 +22,7 @@ void test_transfer_action() {
     uint8_t tx_payload_hex[128];
     uint8_t action_bytes[256];
     char str_buffer[512];
-    proto_st_transfer tx;
+    iotex_st_transfer tx;
 
     tx_payload_len = signer_str2hex(tx_payload, tx_payload_hex, sizeof(tx_payload_hex));
     UNITTEST_ASSERT_NE(-1, tx_payload_len);

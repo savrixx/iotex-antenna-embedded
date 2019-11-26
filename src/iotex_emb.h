@@ -97,6 +97,17 @@ typedef struct {
     } details;
 } iotex_st_validator;
 
+typedef struct iotex_st_transfer {
+    const char *amount;
+    const char *recipient;
+    const uint8_t *payload;
+    size_t payloadLength;
+    const uint64_t *version;
+    const uint64_t *nonce;
+    const uint64_t *gasLimit;
+    const char *gasPrice;
+    const char *privateKey;
+} iotex_st_transfer;
 
 /*
  * @brief: iotex_emb api initialize, configure cert and api version etc
@@ -163,6 +174,14 @@ int iotex_emb_get_action_by_addr(const char *addr,
  * $return: success return 0, failed return negative error code(iotex_em_error)
  */
 int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, size_t *actual_size);
+
+/*
+ * @brief: send a transaction of transfer to iotex blockchain network
+ * #transfer: transfer parameters
+ * #action_hash: success return transfer action hash
+ * $return: success return 0, failed return negative error code(iotex_em_error)
+ */
+int iotex_emb_transfer(const iotex_st_transfer *transfer, iotex_t_hash action_hash);
 
 #ifdef	__cplusplus
 }

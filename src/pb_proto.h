@@ -38,19 +38,8 @@ typedef enum {
 } proto_em_action_type;
 
 
-typedef struct {
-    const char *amount;
-    const char *recipient;
-    uint8_t *payload;
-    size_t payloadLength;
-    uint64_t *version;
-    uint64_t *nonce;
-    uint64_t *gasLimit;
-    const char *gasPrice;
-} proto_st_transfer;
-
-
-int proto_gen_tx_action(const proto_st_transfer *tx, uint8_t *action_bytes, size_t max_size, const char *private_key);
+struct iotex_st_transfer;
+int proto_gen_tx_action(const struct iotex_st_transfer *tx, uint8_t *action_bytes, size_t max_size, const char *private_key);
 
 #ifdef	__cplusplus
 }

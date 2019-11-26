@@ -151,17 +151,36 @@ void test_get_validators() {
     UNITTEST_AUTO_PASS();
 }
 
+void test_act_transfer() {
+
+    iotex_st_transfer tx = {0};
+    iotex_t_hash tx_hash = {0};
+    uint64_t nonce = 1;
+    uint64_t gasLimit = 1000000;
+
+    tx.amount = "0";
+    tx.nonce = &nonce;
+    tx.gasLimit = &gasLimit;
+    tx.gasPrice = "1000000000000";
+    tx.recipient = "io17awtxw3cm4hhku50nshw9250dfyfj576ykumrm";
+    tx.privateKey = "dcdab70604b42d2a215263f5077ebbf6ceeffd46002249cb7e59015135e3bc91";
+
+    iotex_emb_transfer(&tx, tx_hash);
+}
+
 int main(int argc, char **argv) {
 
     iotex_emb_init(NULL);
 
-    test_get_chain_meta();
-    test_get_account_meta();
-    test_get_transfer_by_block();
+//    test_get_chain_meta();
+//    test_get_account_meta();
+//    test_get_transfer_by_block();
 
-    test_get_action_by_hash();
-    test_get_action_by_addr();
-    test_get_validators();
+//    test_get_action_by_hash();
+//    test_get_action_by_addr();
+//    test_get_validators();
+
+    test_act_transfer();
 
     return 0;
 }

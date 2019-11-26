@@ -2,6 +2,7 @@
 #include "pb_proto.h"
 #include "iotex_emb.h"
 
+#define SAFE_STRLEN(s) ((s) ? strlen(s) : 0)
 #define GET_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 /*
@@ -12,7 +13,7 @@
  * #private_key: account private key
  * $return: success retrun #action_bytes actual size, failed return negative error code
  */
-int proto_gen_tx_action(const proto_st_transfer *tx, uint8_t *action_bytes, size_t max_size, const char *private_key) {
+int proto_gen_tx_action(const struct iotex_st_transfer *tx, uint8_t *action_bytes, size_t max_size, const char *private_key) {
 
     int pb_len;
     uint8_t action_signature[SIG_SIGNATURE_SIZE] = {0};
@@ -30,8 +31,8 @@ int proto_gen_tx_action(const proto_st_transfer *tx, uint8_t *action_bytes, size
 
     pb_st_item tx_msg[] = {
 
-        {PB_WT_LD, TX_AMOUNT, (void *)tx->amount, strlen(tx->amount)},
-        {PB_WT_LD, TX_RECIPIENT, (void *)tx->recipient, strlen(tx->recipient)},
+        {PB_WT_LD, TX_AMOUNT, (void *)tx->amount, SAFE_STRLEN(tx->amount)},
+        {PB_WT_LD, TX_RECIPIENT, (void *)tx->recipient, SAFE_STRLEN(tx->recipient)},
         {PB_WT_LD, TX_PAYLOAD, (void *)tx->payload, tx->payloadLength},
     };
 
@@ -40,7 +41,7 @@ int proto_gen_tx_action(const proto_st_transfer *tx, uint8_t *action_bytes, size
         {PB_WT_VARINT, AC_VERSION, (void *)tx->version},
         {PB_WT_VARINT, AC_NONCE, (void *)tx->nonce},
         {PB_WT_VARINT, AC_GAS_LIMIT, (void *)tx->gasLimit},
-        {PB_WT_LD, AC_GAS_PRICE, (void *)tx->gasPrice, strlen(tx->gasPrice)},
+        {PB_WT_LD, AC_GAS_PRICE, (void *)tx->gasPrice, SAFE_STRLEN(tx->gasPrice)},
         {PB_WT_EMB, ACT_TRANSFER, (void *)tx_msg, GET_ARRAY_SIZE(tx_msg)},
     };
 
