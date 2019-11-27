@@ -2,14 +2,16 @@ AR		= $(CROSS_COMPILE)ar
 CC		= $(CROSS_COMPILE)gcc
 CXX		= $(CROSS_COMPILE)g++
 STRIP	= $(CROSS_COMPILE)strip
-CFLAGS	= -Wall -g -fPIC -I../trezor-crypto
+#CFLAGS	= -Wall -g -fPIC -I../trezor-crypto
+CFLAGS	= -Wall -g -fPIC -I./src/crypto
 CXXFLAGS	= -Wall -g -fPIC -D_DEBUG_JSON_PARSE
-LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl -L. -ltrezor-crypto
+LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl
+#LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl -L. -ltrezor-crypto
 ARFLAGS		= rcv
 CODE_STYLE	= astyle --align-pointer=name --align-reference=name --suffix=none --break-blocks --pad-oper --pad-header --break-blocks --keep-one-line-blocks --indent-switches --indent=spaces
 
-SOURCES	= $(wildcard src/*.c)
-HEADERS	= $(wildcard src/*.h)
+SOURCES	= $(wildcard src/*.c) $(wildcard src/crypto/*.c)
+HEADERS	= $(wildcard src/*.h) $(wildcard src/crypto/*.h)
 OBJECTS	= $(SOURCES:.c=.o) 
 TARGETS = libiotexemb.a libiotexemb.so
 

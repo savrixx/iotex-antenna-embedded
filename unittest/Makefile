@@ -5,7 +5,8 @@ LDSHFLAGS	= -rdynamic -shared
 ARFLAGS		= rcv
 CFLAGS		= -Wall -g -fPIC -I../src
 CXXFLAGS	= -Wall -g -fPIC -I../src
-LDFLAGS		= -L.. -liotexemb -lcurl -L.. -ltrezor-crypto
+#LDFLAGS		= -L.. -liotexemb -lcurl -L.. -ltrezor-crypto
+LDFLAGS		= -L.. -liotexemb -lcurl
 
 SRCS=$(wildcard *.c) $(wildcard *.cpp)
 OBJDIR=../objs
