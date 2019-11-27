@@ -27,10 +27,11 @@ void test_transfer_action() {
     tx_payload_len = signer_str2hex(tx_payload, tx_payload_hex, sizeof(tx_payload_hex));
     UNITTEST_ASSERT_NE(-1, tx_payload_len);
 
-    tx.version = &version;
-    tx.nonce = &nonce;
-    tx.gasLimit = &gasLimit;
-    tx.gasPrice = gasPrice;
+    tx.core.version = &version;
+    tx.core.nonce = &nonce;
+    tx.core.gasLimit = &gasLimit;
+    tx.core.gasPrice = gasPrice;
+    tx.core.privateKey = private_key_str;
 
     tx.amount = tx_amount;
     tx.recipient = tx_recipient;
@@ -38,7 +39,7 @@ void test_transfer_action() {
     tx.payloadLength = tx_payload_len;
 
     /* Generate tx action bytes */
-    action_byte_len = proto_gen_tx_action(&tx, action_bytes, sizeof(action_bytes), private_key_str);
+    action_byte_len = proto_gen_tx_action(&tx, action_bytes, sizeof(action_bytes));
     UNITTEST_ASSERT_NE(action_byte_len, -1);
 
     str_len = signer_hex2str(action_bytes, action_byte_len, str_buffer, sizeof(str_buffer));

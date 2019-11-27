@@ -5,7 +5,6 @@
 #include "parse.h"
 #include "debug.h"
 #include "config.h"
-#include "signer.h"
 #include "request.h"
 #include "response.h"
 #include "pb_proto.h"
@@ -24,7 +23,6 @@ void iotex_emb_exit() {
 int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain) {
 
     json_parse_rule epoch_rules[] = {
-
         {"num", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.num},
         {"height", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.height},
         {"gravityChainStartHeight", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.gravityChainStartHeight},
@@ -44,7 +42,6 @@ int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain) {
     char url[IOTEX_EMB_MAX_URL_LEN];
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_CHAINMETA)) {
-
         __WARN_MSG__("compose url failed!");
         return -1;
     }
@@ -55,7 +52,6 @@ int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain) {
 int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta) {
 
     json_parse_rule account_meta[] = {
-
         {"address", JSON_TYPE_STR, NULL, (void *) &meta->address, sizeof(meta->address)},
         {"balance", JSON_TYPE_NUMBER, NULL, (void *) &meta->balance},
         {"nonce", JSON_TYPE_NUMBER, NULL, (void *) &meta->nonce},
@@ -72,7 +68,6 @@ int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta)
     char url[IOTEX_EMB_MAX_URL_LEN];
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_ACCOUNT, account)) {
-
         __WARN_MSG__("compose url failed!");
         return -1;
     }
@@ -87,7 +82,6 @@ int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action) 
 
     /* Block height must convert to string, in case vsnprintf can't handle */
     if (!req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, u1282str(block, block_str, sizeof(block_str)))) {
-
         __WARN_MSG__("compose url failed!");
         return -1;
     }
@@ -100,7 +94,6 @@ int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action)
     char url[IOTEX_EMB_MAX_URL_LEN];
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_ACTIONS_BY_HASH, hash)) {
-
         __WARN_MSG__("compose url failed!");
         return -1;
     }
@@ -116,7 +109,6 @@ int iotex_emb_get_action_by_addr(const char *addr,
     char url[IOTEX_EMB_MAX_URL_LEN];
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_ACTIONS_BY_ADDR, addr, start_idx, count)) {
-
         __WARN_MSG__("compose url failed!");
         return -1;
     }
@@ -137,13 +129,11 @@ int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, si
     char url[IOTEX_EMB_MAX_URL_LEN];
 
     json_parse_rule reward_rule[] = {
-
         {"annual", JSON_TYPE_NUMBER},
         {NULL},
     };
 
     json_parse_rule details_rule[] = {
-
         {"locktime", JSON_TYPE_NUMBER},
         {"minimum_amount", JSON_TYPE_NUMBER},
         {"reward", JSON_TYPE_OBJECT, reward_rule},
@@ -151,7 +141,6 @@ int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, si
     };
 
     json_parse_rule validator_rule[] = {
-
         {"id", JSON_TYPE_STR},
         {"status", JSON_TYPE_BOOLEAN},
         {"details", JSON_TYPE_OBJECT, details_rule},
@@ -159,14 +148,12 @@ int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, si
     };
 
     json_parse_rule rule = {
-
         NULL, JSON_TYPE_ARRAY, validator_rule,
         validators, max_size, JSON_TYPE_OBJECT,
         sizeof(iotex_st_validator), rule_validator_bind, actual_size
     };
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_MEMBER_VALIDATORS)) {
-
         __WARN_MSG__("compose url failed!");
         return -1;
     }
@@ -174,41 +161,12 @@ int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, si
     return res_get_data(url, &rule);
 }
 
-int iotex_emb_transfer(const iotex_st_transfer *transfer, iotex_t_hash hash) {
+int iotex_emb_transfer(const iotex_st_transfer *transfer, iotex_t_hash hash, char **error_desc) {
 
+    return res_get_hash((void *)transfer, ACT_TRANSFER,  hash, IOTEX_EMB_LIMIT_HASH_LEN, error_desc);
+}
 
-    if (!transfer) {
+int iotex_emb_execution(const iotex_st_execution *execution, iotex_t_hash hash, char **error_desc) {
 
-        return -1;
-    }
-
-    if (!transfer->privateKey) {
-
-        return -1;
-    }
-
-    int action_bytes_len;
-    char url[IOTEX_EMB_MAX_URL_LEN];
-    uint8_t action_bytes[IOTEX_EMB_MAX_URL_LEN];
-    char action_bytes_str[IOTEX_EMB_MAX_URL_LEN] = {0};
-
-    /* Generate tx action bytes */
-    if ((action_bytes_len = proto_gen_tx_action(transfer, action_bytes, sizeof(action_bytes), transfer->privateKey)) <= 0) {
-
-        return -1;
-    }
-
-    /* Convert action bytes to string */
-    if (signer_hex2str(action_bytes, action_bytes_len, action_bytes_str, sizeof(action_bytes_str)) < 0) {
-
-        return -1;
-    }
-
-    /* Compose url*/
-    if (!req_compose_url(url, sizeof(url), REQ_SEND_SIGNED_ACTION_BYTES, action_bytes_str)) {
-
-        return -1;
-    }
-
-    return res_get_hash(url, hash, IOTEX_EMB_LIMIT_HASH_LEN);
+    return res_get_hash((void *)execution, ACT_EXECUTION, hash, IOTEX_EMB_LIMIT_HASH_LEN, error_desc);
 }

@@ -116,7 +116,7 @@ void test_get_member_validators() {
 
 void test_act_transfer() {
 
-    char url[IOTEX_EMB_MAX_URL_LEN];
+    char url[1024];
     const char *signed_action_bytes = "0a4c0801107b18f8062203393939523e0a033435361"
                                       "229696f313837777a703038766e686a6a706b79646e"
                                       "723937716c68386b683064706b6b797466616d386a1"

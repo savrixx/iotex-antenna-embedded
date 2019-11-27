@@ -35,11 +35,14 @@ typedef enum {
 typedef enum {
     ACT_TRANSFER = 10,
     ACT_EXECUTION = 12
-} proto_em_action_type;
+} proto_em_action_id;
 
 
 struct iotex_st_transfer;
-int proto_gen_tx_action(const struct iotex_st_transfer *tx, uint8_t *action_bytes, size_t max_size, const char *private_key);
+struct iotex_st_execution;
+
+int proto_gen_tx_action(const struct iotex_st_transfer *tx, uint8_t *action_bytes, size_t max_size);
+int proto_gen_ex_action(const struct iotex_st_execution *ex, uint8_t *action_bytes, size_t max_size);
 
 #ifdef	__cplusplus
 }

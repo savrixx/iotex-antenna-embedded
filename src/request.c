@@ -153,16 +153,13 @@ char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...)
 
     /* Get request config */
     for (i = 0; __g_req_configs[i].paths[0] != NULL; i++) {
-
         if (__g_req_configs[i].req == req) {
-
             conf = __g_req_configs + i;
             break;
         }
     }
 
     if (!conf || !conf->paths[0]) {
-
         __WARN_MSG__("unknown request");
         return NULL;
     }
@@ -192,7 +189,6 @@ char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...)
 
     /* No request args */
     if (!conf->args_fmt)  {
-
         --url_tail;
         *url_tail = 0;
         return url;

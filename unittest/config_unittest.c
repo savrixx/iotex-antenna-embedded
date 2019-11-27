@@ -46,31 +46,9 @@ void test_iotex_emb_init_with_version() {
     UNITTEST_AUTO_PASS();
 }
 
-void test_iotex_emb_init_with_err_version() {
-
-    iotex_st_config config = {0};
-
-    config = get_config();
-    UNITTEST_ASSERT_EQ(config.ver, 0);
-    UNITTEST_ASSERT_EQ(config.cert_dir, NULL);
-    UNITTEST_ASSERT_EQ(config.cert_file, NULL);
-
-    UNITTEST_ASSERT_EQ(-1, iotex_emb_init(&config));
-
-    config = get_config();
-    UNITTEST_ASSERT_EQ(config.ver, 0);
-    UNITTEST_ASSERT_EQ(config.cert_dir, NULL);
-    UNITTEST_ASSERT_EQ(config.cert_file, NULL);
-
-    iotex_emb_exit();
-    UNITTEST_AUTO_PASS();
-}
-
 int main(int argc, char **argv) {
 
     test_iotex_emb_init();
     test_iotex_emb_init_with_version();
-    test_iotex_emb_init_with_err_version();
-
     return 0;
 }

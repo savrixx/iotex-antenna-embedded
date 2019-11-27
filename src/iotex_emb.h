@@ -29,8 +29,10 @@ typedef uint32_t iotex_t_boolean;
 
 typedef enum {
     IOTEX_E_NOERR,
-    IOTEX_E_VERSION,
+    IOTEX_E_VER,
     IOTEX_E_CERT,
+    IOTEX_E_URL,
+    IOTEX_E_PRVKEY
 } iotex_em_error;
 
 /* Structure for configure cert and api version  */
@@ -97,17 +99,29 @@ typedef struct {
     } details;
 } iotex_st_validator;
 
-typedef struct iotex_st_transfer {
-    const char *amount;
-    const char *recipient;
-    const uint8_t *payload;
-    size_t payloadLength;
+typedef struct {
     const uint64_t *version;
     const uint64_t *nonce;
     const uint64_t *gasLimit;
     const char *gasPrice;
     const char *privateKey;
+} iotex_st_act_core;
+
+typedef struct iotex_st_transfer {
+    const char *amount;
+    const char *recipient;
+    const uint8_t *payload;
+    size_t payloadLength;
+    iotex_st_act_core core;
 } iotex_st_transfer;
+
+typedef struct iotex_st_execution {
+    const char *amount;
+    const char *contract;
+    const uint8_t *data;
+    size_t dataLength;
+    iotex_st_act_core core;
+} iotex_st_execution;
 
 /*
  * @brief: iotex_emb api initialize, configure cert and api version etc
@@ -179,9 +193,11 @@ int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, si
  * @brief: send a transaction of transfer to iotex blockchain network
  * #transfer: transfer parameters
  * #action_hash: success return transfer action hash
+ * #error_desc: successed NULL failed strndup error desc
  * $return: success return 0, failed return negative error code(iotex_em_error)
  */
-int iotex_emb_transfer(const iotex_st_transfer *transfer, iotex_t_hash action_hash);
+int iotex_emb_transfer(const iotex_st_transfer *transfer, iotex_t_hash hash, char **error_desc);
+int iotex_emb_execution(const iotex_st_execution *execution, iotex_t_hash hash, char **error_desc);
 
 #ifdef	__cplusplus
 }

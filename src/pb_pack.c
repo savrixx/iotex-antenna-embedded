@@ -1,9 +1,10 @@
 #include <string.h>
 #include <endian.h>
+#include <assert.h>
 #include "pb_pack.h"
 
 
-int pb_pack_varint(const pb_st_item *item, uint8_t *buffer) {
+static int pb_pack_varint(const pb_st_item *item, uint8_t *buffer) {
 
     uint8_t *key = buffer;
     uint8_t *value = buffer + 1;
@@ -12,11 +13,9 @@ int pb_pack_varint(const pb_st_item *item, uint8_t *buffer) {
     *key = PB_SET_KEY(item->field, PB_WT_VARINT);
 
     do {
-
         *value = PB_VARINT_MORE | (varint & PB_VARINT_MASK);
         varint >>= 7;
         value++;
-
     } while (varint);
 
     *(--value) &= ~PB_VARINT_MORE;
@@ -24,8 +23,7 @@ int pb_pack_varint(const pb_st_item *item, uint8_t *buffer) {
     return value - buffer + 1;
 }
 
-
-int pb_pack_64bit(const pb_st_item *item, uint8_t *buffer) {
+static int pb_pack_64bit(const pb_st_item *item, uint8_t *buffer) {
 
     uint8_t *key = buffer;
     uint8_t *value = buffer + 1;
@@ -37,8 +35,7 @@ int pb_pack_64bit(const pb_st_item *item, uint8_t *buffer) {
     return sizeof(fixed64) + 1;
 }
 
-
-int pb_pack_32bit(const pb_st_item *item, uint8_t *buffer) {
+static int pb_pack_32bit(const pb_st_item *item, uint8_t *buffer) {
 
     uint8_t *key = buffer;
     uint8_t *value = buffer + 1;
@@ -50,8 +47,7 @@ int pb_pack_32bit(const pb_st_item *item, uint8_t *buffer) {
     return sizeof(fixed32) + 1;
 }
 
-
-int pb_pack_ld(const pb_st_item *item, uint8_t *buffer) {
+static int pb_pack_ld(const pb_st_item *item, uint8_t *buffer) {
 
     uint8_t *key = buffer;
     uint8_t *value = buffer + 2;
@@ -64,8 +60,10 @@ int pb_pack_ld(const pb_st_item *item, uint8_t *buffer) {
     return item->length + 2;
 }
 
-
 int pb_pack(const pb_st_item *messages, size_t len, uint8_t *buffer, size_t size) {
+
+    assert(messages != NULL);
+    assert(buffer != NULL);
 
     int i = 0;
     int emb_msg_len;
@@ -73,7 +71,6 @@ int pb_pack(const pb_st_item *messages, size_t len, uint8_t *buffer, size_t size
     uint8_t write_type = 0;
     PB_SERIALIZE_FUNC serialize = NULL;
     static const PB_SERIALIZE_FUNC serialize_funcs[PB_MAX_TYPE + 1] = {
-
         pb_pack_varint,
         pb_pack_64bit,
         pb_pack_ld,
@@ -83,27 +80,22 @@ int pb_pack(const pb_st_item *messages, size_t len, uint8_t *buffer, size_t size
     };
 
     for (i = 0; i < len; i++, messages++) {
-
         write_type = PB_GET_WTYPE(messages->type);
 
         if (write_type > PB_MAX_TYPE) {
-
             return -PB_TYPE_ERR;
         }
 
         /* Skip deprecated type and optional field */
         if (!(serialize = serialize_funcs[write_type]) || !messages->data) {
-
             continue;
         }
 
         /* Pack embedded message */
         if (IS_EMB_MSG(messages->type)) {
-
             emb_msg_len = pb_pack((const pb_st_item *)messages->data, messages->length, buffer + packed_len + 2, size - packed_len - 2);
 
             if (emb_msg_len < 0) {
-
                 return -PB_PEMB_ERR;
             }
 
@@ -112,13 +104,11 @@ int pb_pack(const pb_st_item *messages, size_t len, uint8_t *buffer, size_t size
             packed_len += emb_msg_len + 2;
         }
         else {
-
             packed_len += serialize(messages, buffer + packed_len);
         }
 
         /* Buffer to short */
         if (packed_len >= size) {
-
             return -PB_BUFF_ERR;
         }
     }

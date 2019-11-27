@@ -153,34 +153,80 @@ void test_get_validators() {
 
 void test_act_transfer() {
 
+    char *error_desc = NULL;
     iotex_st_transfer tx = {0};
     iotex_t_hash tx_hash = {0};
+
     uint64_t nonce = 1;
     uint64_t gasLimit = 1000000;
 
     tx.amount = "0";
-    tx.nonce = &nonce;
-    tx.gasLimit = &gasLimit;
-    tx.gasPrice = "1000000000000";
     tx.recipient = "io17awtxw3cm4hhku50nshw9250dfyfj576ykumrm";
-    tx.privateKey = "dcdab70604b42d2a215263f5077ebbf6ceeffd46002249cb7e59015135e3bc91";
 
-    iotex_emb_transfer(&tx, tx_hash);
+    tx.core.nonce = &nonce;
+    tx.core.gasLimit = &gasLimit;
+    tx.core.gasPrice = "1000000000000";
+    tx.core.privateKey = "dcdab70604b42d2a215263f5077ebbf6ceeffd46002249cb7e59015135e3bc91";
+
+    if (iotex_emb_transfer(&tx, tx_hash, &error_desc) != 0) {
+
+        if (error_desc) {
+
+            fprintf(stdout, "Transfer failed: %s\n", error_desc);
+            free(error_desc);
+        }
+    }
+    else {
+
+        fprintf(stdout, "Transfer successed, action hash: %s\n", tx_hash);
+    }
+}
+
+void test_act_execution() {
+
+    char *error_desc = NULL;
+    iotex_st_execution ex = {0};
+    iotex_t_hash ex_hash = {0};
+
+    uint64_t nonce = 1;
+    uint64_t gasLimit = 1000000;
+
+    ex.amount = "0";
+    ex.contract = "io17awtxw3cm4hhku50nshw9250dfyfj576ykumrm";
+
+    ex.core.nonce = &nonce;
+    ex.core.gasLimit = &gasLimit;
+    ex.core.gasPrice = "1000000000000";
+    ex.core.privateKey = "dcdab70604b42d2a215263f5077ebbf6ceeffd46002249cb7e59015135e3bc91";
+
+    if (iotex_emb_execution(&ex, ex_hash, &error_desc) != 0) {
+
+        if (error_desc) {
+
+            fprintf(stdout, "Execution failed: %s\n", error_desc);
+            free(error_desc);
+        }
+    }
+    else {
+
+        fprintf(stdout, "Execution successed, action hash: %s\n", ex_hash);
+    }
 }
 
 int main(int argc, char **argv) {
 
     iotex_emb_init(NULL);
 
-//    test_get_chain_meta();
-//    test_get_account_meta();
-//    test_get_transfer_by_block();
+    test_get_chain_meta();
+    test_get_account_meta();
+    test_get_transfer_by_block();
 
-//    test_get_action_by_hash();
-//    test_get_action_by_addr();
-//    test_get_validators();
+    test_get_action_by_hash();
+    test_get_action_by_addr();
+    test_get_validators();
 
     test_act_transfer();
+    test_act_execution();
 
     return 0;
 }

@@ -109,17 +109,14 @@ int init_config(const struct iotex_st_config *config) {
         memcpy(&__g_config, config, sizeof(__g_config));
 
         if (!__g_config.ver) {
-
             __g_config.ver = 1;
         }
 
         if (!__g_config.cert_dir) {
-
             __g_config.cert_dir = config_search_cert_dir();
         }
 
         if (!__g_config.cert_file) {
-
             __g_config.cert_file = config_search_cert_file();
         }
     }
@@ -132,9 +129,7 @@ int init_config(const struct iotex_st_config *config) {
 
     /* Check api version */
     for (size_t i = 0; i < sizeof(__g_support_ver_list) / sizeof(__g_support_ver_list[0]); i++) {
-
         if (__g_config.ver == __g_support_ver_list[i]) {
-
             version_supported = 1;
             break;
         }
@@ -154,7 +149,6 @@ int init_config(const struct iotex_st_config *config) {
     }
 
     if (!config) {
-
         print_config();
     }
 
