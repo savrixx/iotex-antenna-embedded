@@ -24,7 +24,7 @@ all:$(TARGETS)
 
 clean:
 	find . -name "*.o" | xargs rm -f 
-	$(RM) -rf *.o *.so *~ a.out depend.d $(TARGETS) build
+	$(RM) -rf *.o *.a *.so *~ a.out depend.d $(TARGETS) build
 
 distclean:
 	make clean
