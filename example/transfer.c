@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../src/iotex_emb.h"
+#include "iotex_emb.h"
+
 
 int main(int argc, char **argv) {
 
@@ -59,3 +60,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+

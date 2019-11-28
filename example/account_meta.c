@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "../src/u128.h"
-#include "../src/iotex_emb.h"
+#include "u128.h"
+#include "iotex_emb.h"
 
 
 int main(int argc, char **argv) {
@@ -15,14 +15,12 @@ int main(int argc, char **argv) {
     config.cert_file = "cacert.pem";
 
     if ((ret = iotex_emb_init(&config)) != 0) {
-
         fprintf(stderr, "Initialize iotex emb failed, error code: %d\n", ret);
         return -1;
     }
 
     /* Get account metadata */
     if ((ret = iotex_emb_get_account_meta(account_address, &account)) != 0) {
-
         fprintf(stderr, "Get account metadata failed, error code: %d\n", ret);
         return -1;
     }
@@ -33,3 +31,4 @@ int main(int argc, char **argv) {
     iotex_emb_exit();
     return 0;
 }
+

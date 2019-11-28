@@ -3,8 +3,8 @@ CC		= $(CROSS_COMPILE)gcc
 CXX		= $(CROSS_COMPILE)g++
 LDSHFLAGS	= -rdynamic -shared 
 ARFLAGS		= rcv
-CFLAGS		= -Wall -g -fPIC -I../src
-CXXFLAGS	= -Wall -g -fPIC -I../src
+CFLAGS		= -Wall -g -fPIC -I../src -I..
+CXXFLAGS	= -Wall -g -fPIC -I../src -I..
 LDFLAGS		= -L.. -liotexemb -lcurl -L.. -ltrezor-crypto
 
 SRCS=$(wildcard *.c) $(wildcard *.cpp)

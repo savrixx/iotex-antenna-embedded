@@ -16,6 +16,9 @@ TARGETS = libiotexemb.a libiotexemb.so
 SCRIPTS=scripts
 EXAMPLE=example
 UNITTEST=unittest
+LIBNAME=libiotexemb
+PROJECT_NAME=iotex-antenna-embedded
+RELEASE_TARGET_DIR=objs/$(PROJECT_NAME)
 
 .PHONY:all clean distclean test example install help style statistics no_int128 release
 .SILENT: clean
@@ -23,7 +26,8 @@ UNITTEST=unittest
 all:$(TARGETS)
 
 clean:
-	find . -name "*.o" | xargs rm -f 
+	find . -name "*.o" | xargs rm -f
+	find . -name "depend.d" | xargs rm -f 
 	$(RM) -rf *.o *.a *.so *~ a.out depend.d $(TARGETS) build
 
 distclean:
@@ -31,9 +35,17 @@ distclean:
 	make clean -C $(UNITTEST)
 
 release:$(TARGETS)
-	@$(STRIP) libiotexemb.so
-	@$(STRIP) libiotexemb.a
+	@$(STRIP) $(LIBNAME).so
+	@$(STRIP) $(LIBNAME).a
 	@ls *.so *.a -lh
+	@mkdir -p $(RELEASE_TARGET_DIR)
+	@mkdir -p $(RELEASE_TARGET_DIR)
+	@cp README.md $(RELEASE_TARGET_DIR)
+	@cp -a $(EXAMPLE) $(RELEASE_TARGET_DIR)
+	@cp $(SCRIPTS)/env.sh $(RELEASE_TARGET_DIR)
+	@cp src/iotex_emb.h src/u128.h $(RELEASE_TARGET_DIR)
+	@cp $(LIBNAME)*.so $(LIBNAME).a $(RELEASE_TARGET_DIR)
+	@cd objs && tar cvjf $(PROJECT_NAME).tbz2 $(PROJECT_NAME)
 
 test:$(TARGETS)
 	make -C $(UNITTEST)

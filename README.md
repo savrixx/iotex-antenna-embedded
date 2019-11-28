@@ -35,7 +35,7 @@ For embedded Linux device, you may need configure the cert file or directory, to
 
 ```c
 typedef struct iotex_st_config {
-    uint32_t ver;			// pharos API version, default 1
+    uint32_t ver;		// pharos API version, default 1
     long verify_cert;		// set 1 verify the pharos SSL certificate
     long verify_host;		// set 2 verify the certificate's name against host
     const char *cert_dir;	// SSL certificate directory, set NULL will auto search
@@ -111,5 +111,6 @@ source ../scripts/env.sh
 
 // run
 ../objs/account_meta
+../objs/transfer
 ```
 
