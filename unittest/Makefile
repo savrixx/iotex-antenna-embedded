@@ -30,7 +30,7 @@ $(TARGETS):
 	$(CC) $(CFLAGS) -o $(OBJDIR)/$@ $^ $(LDFLAGS)
 
 no_int128:
-	@make clean && make CFLAGS="-Wall -g -fPIC -I../src -D_NO_128INT_"
+	@make clean && make CFLAGS="$(CFLAGS) -D_NO_128INT_"
 
 # Test
 curl_test: curl_test.o

@@ -18,9 +18,9 @@ typedef struct {
 typedef __uint128_t uint128_t;
 #endif
 
-
 void u128_print(uint128_t u128);
 int u128_equal(uint128_t a, uint128_t b);
+int u128_is_less(uint128_t a, uint128_t b);
 
 uint128_t construct_u128(const char *str);
 

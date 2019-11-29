@@ -59,7 +59,7 @@ unittest:test
 	make -C $(SCRIPTS)
 
 no_int128:
-	@make clean && make CFLAGS="-Wall -g -fPIC -D_DEBUG_JSON_PARSE_ -D_NO_128INT_"
+	@make clean && make CFLAGS="$(CFLAGS) -D_NO_128INT_"
 
 style:
 	@find -regex '.*/.*\.\(c\|cpp\|h\)$$' | xargs $(CODE_STYLE)

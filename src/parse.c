@@ -38,7 +38,8 @@ static const char *jsmn_type_str(jsmntype_t type) {
 
 static const char *json_type_str(json_datatype type) {
 
-    static const char *__g_json_type_str[] = {"Undefined", "String", "Time", "Array", "Double", "Object", "Number", "Boolean"};
+    static const char *__g_json_type_str[] = {"Undefined", "String", "Time", "Array", "Double", "Object", \
+                                              "Number", "Boolean", "Number32", "Number64"};
 
     if (type >= 0 && type < sizeof(__g_json_type_str) / sizeof(__g_json_type_str[0])) {
 
@@ -154,6 +155,28 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
                         processed_tok += 2;
                         char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
                         str2u128(value, (uint128_t *)(rule->value));
+                        free(value);
+                    }
+
+                    break;
+
+                case JSON_TYPE_NUMBER32:
+                    if ((tok[1].type == JSMN_STRING || tok[1].type == JSMN_PRIMITIVE) && rule->value) {
+
+                        processed_tok += 2;
+                        char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
+                        *(int32_t *)(rule->value) = atoi(value);
+                        free(value);
+                    }
+
+                    break;
+
+                case JSON_TYPE_NUMBER64:
+                    if ((tok[1].type == JSMN_STRING || tok[1].type == JSMN_PRIMITIVE) && rule->value) {
+
+                        processed_tok += 2;
+                        char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
+                        *(int64_t *)(rule->value) = atol(value);
                         free(value);
                     }
 

@@ -19,12 +19,12 @@ void test_get_chain_meta() {
 
     UNITTEST_AUTO_TRUE(iotex_emb_get_chain_meta(&chainmeta) == 0);
 
-    UNITTEST_ASSERT_GT(chainmeta.height, 1704889);
-    UNITTEST_ASSERT_GT(chainmeta.numActions, 1836031);
+    UNITTEST_ASSERT_EQ(0, u128_is_less(chainmeta.height, construct_u128("1704889")));
+    UNITTEST_ASSERT_EQ(0, u128_is_less(chainmeta.numActions, construct_u128("1836031")));
 
-    UNITTEST_ASSERT_GT(chainmeta.epoch.num, 4736);
-    UNITTEST_ASSERT_GT(chainmeta.epoch.height, 1704601);
-    UNITTEST_ASSERT_GT(chainmeta.epoch.gravityChainStartHeight, 8887300);
+    UNITTEST_ASSERT_EQ(0, u128_is_less(chainmeta.epoch.num, construct_u128("4736")));
+    UNITTEST_ASSERT_EQ(0, u128_is_less(chainmeta.epoch.height, construct_u128("1704601")));
+    UNITTEST_ASSERT_EQ(0, u128_is_less(chainmeta.epoch.gravityChainStartHeight, construct_u128("8887300")));
 }
 
 
@@ -35,8 +35,8 @@ void test_get_account_meta() {
     UNITTEST_ASSERT_EQ(0, iotex_emb_get_account_meta(TEST_ACCOUNT_ADDR, &account));
     UNITTEST_ASSERT_STR_EQ(account.address, TEST_ACCOUNT_ADDR, strlen(TEST_ACCOUNT_ADDR));
 
-    UNITTEST_ASSERT_GT(account.nonce, 30);
-    UNITTEST_ASSERT_GT(account.numActions, 43);
+    UNITTEST_ASSERT_EQ(0, u128_is_less(account.nonce, construct_u128("30")));
+    UNITTEST_ASSERT_EQ(0, u128_is_less(account.numActions, construct_u128("43")));
     UNITTEST_AUTO_PASS();
 }
 

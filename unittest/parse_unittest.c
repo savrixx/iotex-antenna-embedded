@@ -108,12 +108,24 @@ void test_parse_object() {
 void test_parse_number() {
 
     uint128_t n[5];
+    int32_t n32[5];
+    int64_t n64[5];
     const char *raw_string = "{"
                              "\"key1\": 0,"
                              "\"key2\": 1,"
                              "\"key3\": 2000,"
                              "\"key4\": 3141592653589793,"
-                             "\"key5\": 8703340000000000000000"
+                             "\"key5\": 8703340000000000000000,"
+                             "\"key6\": 123,"
+                             "\"key7\": -123,"
+                             "\"key8\": -12345,"
+                             "\"key9\": 2147483647,"
+                             "\"key10\": -2147483647,"
+                             "\"key11\": 0,"
+                             "\"key12\": 1,"
+                             "\"key13\": -3141592653589793,"
+                             "\"key14\": 9223372036854775807,"
+                             "\"key15\": -9223372036854775807"
                              "}";
 
     json_parse_rule rules[] = {
@@ -123,16 +135,39 @@ void test_parse_number() {
         {"key3", JSON_TYPE_NUMBER, NULL, &n[2]},
         {"key4", JSON_TYPE_NUMBER, NULL, &n[3]},
         {"key5", JSON_TYPE_NUMBER, NULL, &n[4]},
+        {"key6", JSON_TYPE_NUMBER32, NULL, &n32[0]},
+        {"key7", JSON_TYPE_NUMBER32, NULL, &n32[1]},
+        {"key8", JSON_TYPE_NUMBER32, NULL, &n32[2]},
+        {"key9", JSON_TYPE_NUMBER32, NULL, &n32[3]},
+        {"key10", JSON_TYPE_NUMBER32, NULL, &n32[4]},
+        {"key11", JSON_TYPE_NUMBER64, NULL, &n64[0]},
+        {"key12", JSON_TYPE_NUMBER64, NULL, &n64[1]},
+        {"key13", JSON_TYPE_NUMBER64, NULL, &n64[2]},
+        {"key14", JSON_TYPE_NUMBER64, NULL, &n64[3]},
+        {"key15", JSON_TYPE_NUMBER64, NULL, &n64[4]},
         {NULL},
     };
 
     UNITTEST_ASSERT_EQ(0, json_parse_response(raw_string, rules));
 
-    UNITTEST_ASSERT_EQ(1, u128_equal(0, n[0]));
-    UNITTEST_ASSERT_EQ(1, u128_equal(1, n[1]));
-    UNITTEST_ASSERT_EQ(1, u128_equal(2000, n[2]));
-    UNITTEST_ASSERT_EQ(1, u128_equal(3141592653589793, n[3]));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("0"), n[0]));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("1"), n[1]));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("2000"), n[2]));
+    UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("3141592653589793"), n[3]));
     UNITTEST_ASSERT_EQ(1, u128_equal(construct_u128("8703340000000000000000"), n[4]));
+
+    UNITTEST_ASSERT_EQ(123, n32[0]);
+    UNITTEST_ASSERT_EQ(-123, n32[1]);
+    UNITTEST_ASSERT_EQ(-12345, n32[2]);
+    UNITTEST_ASSERT_EQ(2147483647, n32[3]);
+    UNITTEST_ASSERT_EQ(-2147483647, n32[4]);
+
+    UNITTEST_ASSERT_EQ(0, n64[0]);
+    UNITTEST_ASSERT_EQ(1, n64[1]);
+    UNITTEST_ASSERT_EQ(-3141592653589793, n64[2]);
+    UNITTEST_ASSERT_EQ(9223372036854775807, n64[3]);
+    UNITTEST_ASSERT_EQ(-9223372036854775807, n64[4]);
+    UNITTEST_ASSERT_EQ(-2147483647, n32[4]);
 
     UNITTEST_AUTO_PASS();
 }

@@ -16,6 +16,24 @@ int u128_equal(uint128_t a, uint128_t b) {
 #endif
 }
 
+int u128_is_less(uint128_t a, uint128_t b) {
+#ifdef _NO_128INT_
+    size_t a_len = strlen(a.raw);
+    size_t b_len = strlen(b.raw);
+
+    if (a_len < b_len) {
+        return 1;
+    }
+    else if (b_len < a_len) {
+        return 0;
+    }
+    else {
+        return memcpy(a.raw, b.raw, a_len) < 0;
+    }
+#else
+    return a < b;
+#endif
+}
 
 /* Print uint128_t */
 void u128_print(uint128_t u128) {
@@ -58,11 +76,9 @@ void str2u128(const char *str, uint128_t *num) {
     for (src = str, dest = num->raw; *src; src++, dest++) {
 
         if (*src >= '0' && *src <= '9') {
-
             *dest = *src;
         }
         else {
-
             memset(num->raw, 0, sizeof(num->raw));
             num->raw[0] = '0';
             return;
@@ -74,13 +90,10 @@ void str2u128(const char *str, uint128_t *num) {
     const char *c = NULL;
 
     for (c = str, u128 = 0; *c; c++) {
-
         if (*c >= '0' && *c <= '9') {
-
             u128 = u128 * 10 + (*c - '0');
         }
         else {
-
             u128 = 0;
             break;
         }
@@ -118,23 +131,19 @@ char *u1282str(uint128_t num, char *str, size_t str_max_len) {
     char *start = str, *end = str;
 
     if (num == 0) {
-
         str[0] = '0';
         str[1] = 0;
         return str;
     }
 
     while (num != 0) {
-
         if (end - start < str_max_len - 1) {
-
             remaining = num % 10;
             *end = remaining + '0';
             num /= 10;
             end++;
         }
         else {
-
             return NULL;
         }
     }
@@ -143,7 +152,6 @@ char *u1282str(uint128_t num, char *str, size_t str_max_len) {
 
     /* Reverse end and start */
     while (start < --end) {
-
         temp = *start;
         *start = *end;
         *end = temp;

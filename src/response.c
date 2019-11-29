@@ -140,7 +140,7 @@ int res_get_hash(const void *action, uint8_t action_id, char *hash, size_t max_s
 int res_get_actions(const char *request, struct iotex_st_action_info *actions, size_t max_size) {
 
     int ret;
-    uint128_t actual_size = 0;
+    int32_t actual_size = 0;
 
     json_parse_rule core_transfer_rule[] = {
         {"amount", JSON_TYPE_NUMBER},
@@ -176,7 +176,7 @@ int res_get_actions(const char *request, struct iotex_st_action_info *actions, s
     };
 
     json_parse_rule top_rule[] = {
-        {"total", JSON_TYPE_NUMBER, NULL, (void *) &actual_size},
+        {"total", JSON_TYPE_NUMBER32, NULL, (void *) &actual_size},
         /* key, json value type, array element parse rule, an array to save object, object array size, array element type, single object size, rule data bind callback */
         {"actionInfo", JSON_TYPE_ARRAY, action_info_rule, (void *)actions, max_size, JSON_TYPE_OBJECT, sizeof(iotex_st_action_info), rule_action_info_bind},
         {NULL}

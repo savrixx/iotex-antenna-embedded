@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "unittest.h"
 #include "test_config.h"
+#include "../src/debug.h"
 #include "../src/u128.h"
 #include "../src/config.h"
 #include "../src/request.h"
@@ -78,16 +79,20 @@ void test_get_action_by_addr() {
 
 void test_transfers_by_block() {
 
-    char u128_str[UINT128_RAW_MAX_LEN];
+    const char *blocks[] = {
+        "1",
+        "123",
+        "12121212121",
+        "43535555433434343",
+        "212241313131213381313131",
+        TEST_TRANSFERS_BLOCK,
+        NULL
+    };
 
-    for (uint128_t i = 0; i < 10; i++) {
-
-        UNITTEST_ASSERT_NE(req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, u1282str(i, u128_str, sizeof(u128_str))), NULL);
-        UNITTEST_ASSERT_EQ(url[strlen(url) - 1], i + '0');
+    for (int i = 0; blocks[i]; i++) {
+        UNITTEST_ASSERT_NE(req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, blocks[i]), NULL);
+        UNITTEST_ASSERT_STR_EQ(url + strlen(url) - strlen(blocks[i]), blocks[i], strlen(blocks[i]));
     }
-
-    UNITTEST_ASSERT_NE(req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, TEST_TRANSFERS_BLOCK), NULL);
-    UNITTEST_ASSERT_STR_EQ(url + strlen(url) - strlen(TEST_TRANSFERS_BLOCK), TEST_TRANSFERS_BLOCK, strlen(TEST_TRANSFERS_BLOCK));
 
     UNITTEST_AUTO_PASS();
 }
