@@ -243,10 +243,10 @@ static int req_basic_request(const char *request, char *response, size_t respons
     curl_easy_setopt(curl, CURLOPT_CAPATH, config.cert_dir);
 
     /* Disconnect if we can't validate server's cert */
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, config.verify_cert);
 
     /* Verify the cert's name against host */
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, config.verify_host);
 
     /* Set write data and write function */
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res);

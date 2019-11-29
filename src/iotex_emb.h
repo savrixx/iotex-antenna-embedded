@@ -1,5 +1,5 @@
 #ifndef _IOTEX_EMB_H_
-#define _IOTEX_EBM_H_
+#define _IOTEX_EMB_H_
 
 
 #ifdef	__cplusplus
@@ -37,9 +37,11 @@ typedef enum {
 
 /* Structure for configure cert and api version  */
 typedef struct iotex_st_config {
-    uint32_t ver;
-    const char *cert_dir;
-    const char *cert_file;
+    uint32_t ver;		// pharos API version, default 1
+    long verify_cert;		// set 1 verify the pharos SSL certificate, 0 don't verify SSL certificate
+    long verify_host;		// set 2 verify the certificate's name against host, 0 don't verify
+    const char *cert_dir;	// SSL certificate directory, set NULL will auto search (embedded linux may not works fine)
+    const char *cert_file;	// SSL certificate file, set NULL will auto search (embedded linux may not works fine)
 } iotex_st_config;
 
 typedef struct {

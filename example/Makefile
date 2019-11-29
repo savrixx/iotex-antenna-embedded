@@ -3,9 +3,9 @@ CC		= $(CROSS_COMPILE)gcc
 CXX		= $(CROSS_COMPILE)g++
 LDSHFLAGS	= -rdynamic -shared 
 ARFLAGS		= rcv
-CFLAGS		= -Wall -g -fPIC -I../src
-CXXFLAGS	= -Wall -g -fPIC -I../src
-LDFLAGS		= -L.. -liotexemb -lcurl
+CFLAGS		= -Wall -g -fPIC -I../src -I..
+CXXFLAGS	= -Wall -g -fPIC -I../src -I..
+LDFLAGS		= -L.. -liotexemb -lcurl -L.. -ltrezor-crypto
 
 SRCS=$(wildcard *.c) $(wildcard *.cpp)
 OBJDIR=../objs
@@ -32,6 +32,7 @@ no_int128:
 	@make clean && make CFLAGS="-Wall -g -fPIC -I../src -D_NO_128INT_"
 
 # Examples
+transfer: transfer.o
 account_meta: account_meta.o
 
 depend.d:$(wildcard *.h *.c)
