@@ -10,8 +10,8 @@ LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl
 ARFLAGS		= rcv
 CODE_STYLE	= astyle --align-pointer=name --align-reference=name --suffix=none --break-blocks --pad-oper --pad-header --break-blocks --keep-one-line-blocks --indent-switches --indent=spaces
 
-SOURCES	= $(wildcard src/*.c) $(wildcard src/crypto/*.c)
-HEADERS	= $(wildcard src/*.h) $(wildcard src/crypto/*.h)
+SOURCES	= $(shell find ./src -name "*.c")
+HEADERS	= $(shell find ./src -name "*.h")
 OBJECTS	= $(SOURCES:.c=.o) 
 TARGETS = libiotexemb.a libiotexemb.so
 

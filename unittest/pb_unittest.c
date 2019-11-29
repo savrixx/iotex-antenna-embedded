@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <endian.h>
 #include "unittest.h"
 #include "test_config.h"
 #include "../src/debug.h"

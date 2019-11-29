@@ -1,7 +1,7 @@
 #include <string.h>
-#include <endian.h>
 #include <assert.h>
 #include "pb_pack.h"
+#include "endian_conv.h"
 
 
 static int pb_pack_varint(const pb_st_item *item, uint8_t *buffer) {
@@ -27,7 +27,7 @@ static int pb_pack_64bit(const pb_st_item *item, uint8_t *buffer) {
 
     uint8_t *key = buffer;
     uint8_t *value = buffer + 1;
-    uint64_t fixed64 = htole64(*((uint64_t *)item->data));
+    uint64_t fixed64 = ENDIAN_H2LE64(*((uint64_t *)item->data));
 
     *key = PB_SET_KEY(item->field, PB_WT_64);
     memcpy(value, &fixed64, sizeof(fixed64));
@@ -39,7 +39,7 @@ static int pb_pack_32bit(const pb_st_item *item, uint8_t *buffer) {
 
     uint8_t *key = buffer;
     uint8_t *value = buffer + 1;
-    uint32_t fixed32 = htole32(*((uint32_t *)item->data));
+    uint32_t fixed32 = ENDIAN_H2LE32(*((uint32_t *)item->data));
 
     *key = PB_SET_KEY(item->field, PB_WT_32);
     memcpy(value, &fixed32, sizeof(fixed32));
