@@ -3,7 +3,7 @@ CC		= $(CROSS_COMPILE)gcc
 CXX		= $(CROSS_COMPILE)g++
 STRIP	= $(CROSS_COMPILE)strip
 #CFLAGS	= -Wall -g -fPIC -I../trezor-crypto
-CFLAGS	= -Wall -g -fPIC -I./src/crypto
+CFLAGS	= -Wall -g -fPIC -I./src/crypto -std=gnu99
 CXXFLAGS	= -Wall -g -fPIC -D_DEBUG_JSON_PARSE
 LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl
 #LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl -L. -ltrezor-crypto
@@ -60,6 +60,14 @@ unittest:test
 
 no_int128:
 	@make clean && make CFLAGS="$(CFLAGS) -D_NO_128INT_"
+
+no_int128_test:
+	@make no_int128
+	@make -C $(UNITTEST) no_int128
+
+no_int128_unittest:
+	@make no_int128_test
+	make -C $(SCRIPTS)
 
 style:
 	@find -regex '.*/.*\.\(c\|cpp\|h\)$$' | xargs $(CODE_STYLE)

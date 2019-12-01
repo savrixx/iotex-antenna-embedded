@@ -101,6 +101,7 @@ void clear_config(void) {
 /* If don't specify context, auto search cert file and directory */
 int init_config(const struct iotex_st_config *config) {
 
+    size_t i;
     int version_supported = 0;
 
     if (config) {
@@ -128,7 +129,7 @@ int init_config(const struct iotex_st_config *config) {
     }
 
     /* Check api version */
-    for (size_t i = 0; i < sizeof(__g_support_ver_list) / sizeof(__g_support_ver_list[0]); i++) {
+    for (i = 0; i < sizeof(__g_support_ver_list) / sizeof(__g_support_ver_list[0]); i++) {
         if (__g_config.ver == __g_support_ver_list[i]) {
             version_supported = 1;
             break;

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "rule.h"
 #include "debug.h"
 #include "parse.h"

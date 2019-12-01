@@ -3,8 +3,7 @@ CC		= $(CROSS_COMPILE)gcc
 CXX		= $(CROSS_COMPILE)g++
 LDSHFLAGS	= -rdynamic -shared 
 ARFLAGS		= rcv
-CFLAGS		= -Wall -g -fPIC -I../src
-CXXFLAGS	= -Wall -g -fPIC -I../src
+CFLAGS		= -Wall -g -fPIC -I../src -std=gnu99
 #LDFLAGS		= -L.. -liotexemb -lcurl -L.. -ltrezor-crypto
 LDFLAGS		= -L.. -liotexemb -lcurl
 
@@ -50,6 +49,10 @@ request_unittest: request_unittest.o
 
 test:$(TARGETS)
 	@chmod u+x $(SCRIPTS)/*.sh
+	@make -C $(SCRIPTS)
+
+no_int128_test:
+	@make no_int128
 	@make -C $(SCRIPTS)
 
 depend.d:$(wildcard *.h *.c)

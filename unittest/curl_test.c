@@ -3,16 +3,7 @@
 #include <string.h>
 #include <curl/curl.h>
 #include "config.h"
-
-#ifdef __APPLE__
-#define DEF_CA_INFO "/etc/ssl/cert.pem"
-#else
-#define DEF_CA_INFO "/etc/ssl/certs/ca-certificates.crt"
-#endif
-
-#define DEF_CA_PATH "/etc/ssl/certs"
-
-
+#include "iotex_emb.h"
 
 int main(int argc, char **argv) {
 
@@ -21,6 +12,10 @@ int main(int argc, char **argv) {
         fprintf(stdout, "Usage: %s <url> [enable_post] [header_file_path]\n", argv[0]);
         return -1;
     }
+
+    /* Auto search cert */
+    iotex_emb_init(NULL);
+    iotex_st_config config = get_config();
 
     CURL *curl;
     CURLcode res;
@@ -57,14 +52,14 @@ int main(int argc, char **argv) {
         }
 
         /* Set the file with the certs vaildating the server */
-        curl_easy_setopt(curl, CURLOPT_CAINFO, DEF_CA_INFO);
-        curl_easy_setopt(curl, CURLOPT_CAPATH, DEF_CA_PATH);
+        curl_easy_setopt(curl, CURLOPT_CAINFO, config.cert_file);
+        curl_easy_setopt(curl, CURLOPT_CAPATH, config.cert_dir);
 
         /* Disconnect if we can't validate server's cert */
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, config.verify_cert);
 
         /* Verify the cert's name against host */
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, config.verify_host);
 
         /* Perform the request, res will get the return code */
         res = curl_easy_perform(curl);

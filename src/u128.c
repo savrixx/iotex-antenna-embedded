@@ -28,8 +28,9 @@ int u128_is_less(uint128_t a, uint128_t b) {
         return 0;
     }
     else {
-        return memcpy(a.raw, b.raw, a_len) < 0;
+        return memcmp(a.raw, b.raw, a_len) < 0;
     }
+
 #else
     return a < b;
 #endif

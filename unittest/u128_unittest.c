@@ -84,11 +84,23 @@ void u128_equal_test() {
     UNITTEST_AUTO_PASS();
 }
 
+void u128_compare_test() {
+
+    UNITTEST_ASSERT_EQ(1, u128_is_less(construct_u128("12"), construct_u128("124")));
+    UNITTEST_ASSERT_EQ(1, u128_is_less(construct_u128("123"), construct_u128("124")));
+    UNITTEST_ASSERT_EQ(1, u128_is_less(construct_u128("123"), construct_u128("124")));
+    UNITTEST_ASSERT_EQ(1, u128_is_less(construct_u128("8703350000000000000000"), construct_u128("8703350000000000000001")));
+    UNITTEST_ASSERT_EQ(1, u128_is_less(construct_u128("8703350000000000000000112"), construct_u128("8703350000000000000000113")));
+    UNITTEST_ASSERT_EQ(0, u128_is_less(construct_u128("8703350000000000000000112"), construct_u128("8703350000000000000000112")));
+
+    UNITTEST_AUTO_PASS();
+}
 
 int main(int argc, char **argv) {
 
     str2u128_test();
     u1282str_test();
     u128_equal_test();
+    u128_compare_test();
     return 0;
 }

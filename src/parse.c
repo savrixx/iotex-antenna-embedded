@@ -39,7 +39,8 @@ static const char *jsmn_type_str(jsmntype_t type) {
 static const char *json_type_str(json_datatype type) {
 
     static const char *__g_json_type_str[] = {"Undefined", "String", "Time", "Array", "Double", "Object", \
-                                              "Number", "Boolean", "Number32", "Number64"};
+                                              "Number", "Boolean", "Number32", "Number64"
+                                             };
 
     if (type >= 0 && type < sizeof(__g_json_type_str) / sizeof(__g_json_type_str[0])) {
 
@@ -176,7 +177,7 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
 
                         processed_tok += 2;
                         char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
-                        *(int64_t *)(rule->value) = atol(value);
+                        *(int64_t *)(rule->value) = atoll(value);
                         free(value);
                     }
 
@@ -242,41 +243,44 @@ static int json_parse_array(const char *json, jsmntok_t *tok, int tok_count, jso
             rule->key, array_size, json_type_str(rule->array_element_type), rule->value_len, rule->single_array_element_size, tok_count);
 #endif
 
-    for (i = 0; i < array_size; i++) {
+    /* Object array */
+    switch (tok->type) {
 
-
-        if (tok->type == JSMN_OBJECT && rule->array_element_type == JSON_TYPE_OBJECT) {
+        case JSMN_OBJECT:
+            if (rule->array_element_type != JSON_TYPE_OBJECT) {
+                return -1;
+            }
 
             /* Don't know how to parse */
             if (!rule->sub || !rule->array_element_bind || rule->single_array_element_size == 0) {
-
                 return -1;
             }
 
-            /* Bind array element data to parse rule */
-            if (rule->array_element_bind(rule->sub, rule->value + i * rule->single_array_element_size) != 0) {
+            for (i = 0; i < array_size && i < rule->value_len; i++) {
 
-                return -1;
+                /* Bind array element data to parse rule */
+                if (rule->array_element_bind(rule->sub, rule->value + i * rule->single_array_element_size) != 0) {
+                    return -1;
+                }
+
+                /* Parse array object data */
+                if ((ret = json_parse_object(json, tok + 1, single_element_tok_size, rule->sub)) == -1) {
+                    return -1;
+                }
+
+                tok += ret + 1;
+                processed_tok += ret + 1;
             }
 
-            /* Parse array object data */
-            if ((ret = json_parse_object(json, tok + 1, single_element_tok_size, rule->sub)) == -1) {
+            break;
 
-                return -1;
-            }
-
-            tok += ret + 1;
-            processed_tok += ret + 1;
-        }
-        else {
-
-            /* TODO: handle other type data */
-        }
+        /* TODO: handle other type data */
+        default:
+            return -1;
     }
 
     /* Update array actual size*/
     if (rule->array_actual_size) {
-
         *rule->array_actual_size = array_size;
     }
 
