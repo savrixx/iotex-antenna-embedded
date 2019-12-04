@@ -68,7 +68,6 @@ void str2u128(const char *str, uint128_t *num) {
 
     /* String too long */
     if (str_len > raw_size - 1) {
-
         num->raw[0] = '0';
         return;
     }
@@ -120,7 +119,6 @@ char *u1282str(uint128_t num, char *str, size_t str_max_len) {
     size_t raw_len = strlen(num.raw);
 
     if (str_max_len < raw_len + 1) {
-
         return NULL;
     }
 

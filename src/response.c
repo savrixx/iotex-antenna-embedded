@@ -26,7 +26,7 @@ int res_get_data(const char *request, json_parse_rule *rules) {
     char *response = NULL;
 
     if ((response = malloc(IOTEX_EBM_MAX_RES_LEN)) == NULL) {
-        return -1;
+        return -IOTEX_E_MEM;
     }
 
 #ifdef _DEBUG_HTTP_
@@ -35,7 +35,7 @@ int res_get_data(const char *request, json_parse_rule *rules) {
 
     if (req_get_request(request, response, IOTEX_EBM_MAX_RES_LEN) != 0) {
         free(response);
-        return -1;
+        return -IOTEX_E_REQUEST;
     }
 
 #ifdef _DEBUG_HTTP_
@@ -44,14 +44,14 @@ int res_get_data(const char *request, json_parse_rule *rules) {
 
     if (json_parse_response(response, rules) != 0) {
         free(response);
-        return -1;
+        return -IOTEX_E_PARSE;
     }
 
     free(response);
     return 0;
 }
 
-int res_get_hash(const void *action, uint8_t action_id, char *hash, size_t max_size, char **error_desc) {
+int res_get_hash(const void *action, uint8_t action_id, char *hash, size_t hash_max, char **error_desc) {
 
     int action_hash_len;
     int action_bytes_len;
@@ -74,26 +74,26 @@ int res_get_hash(const void *action, uint8_t action_id, char *hash, size_t max_s
 
         default:
             SET_ERROR_DESC("Unsupported action", error_desc);
-            return -1;
+            return -IOTEX_E_UNSUPPORT;
     }
 
     if (action_bytes_len <= 0) {
-        return -1;
+        return -IOTEX_E_PBPACK;
     }
 
     /* Convert action bytes to string */
     if (signer_hex2str(action_bytes, action_bytes_len, action_bytes_str, sizeof(action_bytes_str)) < 0) {
-        return -1;
+        return -IOTEX_E_HEX2STR;
     }
 
     /* Compose url*/
     if (!req_compose_url(request, sizeof(request), REQ_SEND_SIGNED_ACTION_BYTES, action_bytes_str)) {
-        return -1;
+        return -IOTEX_E_URL;
     }
 
     /* Malloc response data buffer */
     if ((response = malloc(IOTEX_EBM_MAX_RES_LEN)) == NULL) {
-        return -1;
+        return -IOTEX_E_MEM;
     }
 
 #ifdef _DEBUG_HTTP_
@@ -102,7 +102,7 @@ int res_get_hash(const void *action, uint8_t action_id, char *hash, size_t max_s
 
     if (req_post_request(request, response, IOTEX_EBM_MAX_RES_LEN) != 0) {
         free(response);
-        return -1;
+        return -IOTEX_E_REQUEST;
     }
 
 #ifdef _DEBUG_HTTP_
@@ -115,7 +115,7 @@ int res_get_hash(const void *action, uint8_t action_id, char *hash, size_t max_s
     if ((action_hash_len = signer_str2hex(response, action_hash, sizeof(action_hash))) <= 0) {
         SET_ERROR_DESC(response, error_desc);
         free(response);
-        return -1;
+        return -IOTEX_E_RESPONSE;
     }
 
     /* Unpack hash from hex */
@@ -123,11 +123,11 @@ int res_get_hash(const void *action, uint8_t action_id, char *hash, size_t max_s
             action_hash[1] != action_hash_len - 2 || action_hash[1] != SIG_HASH_SIZE) {
         SET_ERROR_DESC(response, error_desc);
         free(response);
-        return -1;
+        return -IOTEX_E_RESPONSE;
     }
 
     free(response);
-    return signer_hex2str(action_hash + 2, action_hash_len - 2, hash, max_size) == SIG_HASH_SIZE * 2 ? 0 : -1;
+    return signer_hex2str(action_hash + 2, action_hash_len - 2, hash, hash_max) == SIG_HASH_SIZE * 2 ? 0 : -IOTEX_E_RESPONSE;
 }
 
 

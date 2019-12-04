@@ -27,27 +27,24 @@ static const char *jsmn_type_str(jsmntype_t type) {
     static const char *__g_jsmn_type_str[] = {"UNDEFINED", "OBJECT", "ARRAY", "STRING", "PRIMITIVE"};
 
     if (type >= 0 && type < sizeof(__g_jsmn_type_str) / sizeof(__g_jsmn_type_str[0])) {
-
         return __g_jsmn_type_str[type];
     }
     else {
-
         return "Unknown type";
     }
 }
 
 static const char *json_type_str(json_datatype type) {
 
-    static const char *__g_json_type_str[] = {"Undefined", "String", "Time", "Array", "Double", "Object", \
-                                              "Number", "Boolean", "Number32", "Number64"
-                                             };
+    static const char *__g_json_type_str[] = {
+        "Undefined", "String", "Time", "Array", "Double", "Object", \
+        "Number", "Boolean", "Number32", "Number64"
+    };
 
     if (type >= 0 && type < sizeof(__g_json_type_str) / sizeof(__g_json_type_str[0])) {
-
         return __g_json_type_str[type];
     }
     else {
-
         return "Unknown type";
     }
 }
@@ -59,9 +56,7 @@ static const char *json_type_str(json_datatype type) {
  * #tok: json object token after call jsmn_parse
  * #tok_count: #tok count
  * #rules: an array to describe json hierarchy, ends with NULL
- * $return: successed return processed jsontok_t size, failed return -1
- *
- * TODO: retrun meaningful error code
+ * $return: return processed jsontok_t number
  */
 static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, json_parse_rule *rules) {
 
@@ -79,7 +74,6 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
         for (rule = rules; rule && rule->key; rule++) {
 
             if (jsoneq(json, tok, rule->key) != 0) {
-
                 continue;
             }
 
@@ -105,11 +99,9 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
                     if (tok[1].type == JSMN_ARRAY && rule->value && rule->value_len) {
 
                         if ((ret = json_parse_array(json, tok + 2, tok_count - i - 2, rule, tok[1].size)) < 0) {
-
                             return ret;
                         }
                         else {
-
                             i += ret + 1;
                             tok += ret + 1;
                             processed_tok += ret + 2;
@@ -120,7 +112,6 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
 
                 case JSON_TYPE_DOUBLE:
                     if (tok[1].type == JSMN_PRIMITIVE && rule->value) {
-
                         processed_tok += 2;
                         char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
                         *(double *)(rule->value) = atof(value);
@@ -137,11 +128,9 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
 #endif
 
                         if ((ret = json_parse_object(json, tok + 2, tok_count - i - 2, rule->sub)) < 0) {
-
                             return ret;
                         }
                         else {
-
                             i += ret + 1;
                             tok += ret + 1;
                             processed_tok += ret + 2;
@@ -163,7 +152,6 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
 
                 case JSON_TYPE_NUMBER32:
                     if ((tok[1].type == JSMN_STRING || tok[1].type == JSMN_PRIMITIVE) && rule->value) {
-
                         processed_tok += 2;
                         char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
                         *(int32_t *)(rule->value) = atoi(value);
@@ -174,7 +162,6 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
 
                 case JSON_TYPE_NUMBER64:
                     if ((tok[1].type == JSMN_STRING || tok[1].type == JSMN_PRIMITIVE) && rule->value) {
-
                         processed_tok += 2;
                         char *value = strndup(json + tok[1].start, tok[1].end - tok[1].start);
                         *(int64_t *)(rule->value) = atoll(value);
@@ -185,16 +172,13 @@ static int json_parse_object(const char *json, jsmntok_t *tok, int tok_count, js
 
                 case JSON_TYPE_BOOLEAN:
                     if ((tok[1].type == JSMN_STRING || tok[1].type == JSMN_PRIMITIVE) && rule->value) {
-
                         processed_tok += 2;
                         boolean_head = json[tok[1].start];
 
                         if (tok[1].type == JSMN_PRIMITIVE && boolean_head == 't') {
-
                             *(uint32_t *)(rule->value) = 1;
                         }
                         else {
-
                             *(uint32_t *)(rule->value) = 0;
                         }
                     }
@@ -313,21 +297,18 @@ int json_parse_response(const char *response, json_parse_rule *rules) {
     token_size = strlen(response) >> 2;
 
     if (!(token = calloc(sizeof(jsmntok_t), token_size))) {
-
         return -1;
     }
 
     if ((tok_total = jsmn_parse(&parser,
                                 response, strlen(response),
                                 token, token_size)) < 0) {
-
         fprintf(stderr, "Json parse response failed: %d\n", tok_total);
         free(token);
         return -1;
     }
 
     if (tok_total < 1) {
-
         fprintf(stderr, "Json parse failed!\n");
         free(token);
         return -1;
@@ -337,7 +318,6 @@ int json_parse_response(const char *response, json_parse_rule *rules) {
     if (token[0].type == JSMN_OBJECT) {
 
         if ((processed_tok = json_parse_object(response, token, tok_total - 1, rules)) != tok_total - 1) {
-
             fprintf(stderr, "Json parse failed, total token: %d, processed token: %d\n", tok_total - 1, processed_tok);
             free(token);
             return -1;
@@ -347,14 +327,12 @@ int json_parse_response(const char *response, json_parse_rule *rules) {
     else if (token[0].type == JSMN_ARRAY) {
 
         if ((processed_tok = json_parse_array(response, token + 1, tok_total - 1, rules, token[0].size)) != tok_total - 1) {
-
             fprintf(stderr, "Json parse failed, total token: %d, processed token: %d\n", tok_total - 1, processed_tok);
             free(token);
             return -1;
         }
     }
     else {
-
         fprintf(stdout, "Unknown type: %d\n", token[0].type);
         free(token);
         return -1;

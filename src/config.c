@@ -39,7 +39,6 @@ static const char *__g_cert_dirs[] = {
 
 /* Get file type */
 static mode_t __get_file_type(const char *path) {
-
     struct stat attr;
     memset(&attr, 0, sizeof(attr));
 
@@ -79,7 +78,6 @@ static const char *config_search_cert_dir() {
 }
 
 struct iotex_st_config get_config() {
-
     return __g_config;
 }
 
@@ -94,7 +92,6 @@ void print_config() {
 }
 
 void clear_config(void) {
-
     memset(&__g_config, 0, sizeof(__g_config));
 }
 
@@ -139,14 +136,14 @@ int init_config(const struct iotex_st_config *config) {
     if (!version_supported) {
         fprintf(stderr, "Unsupported API Version: %d\n", __g_config.ver);
         clear_config();
-        return -1;
+        return -IOTEX_E_VER;
     }
 
     /* Check cert file and directory */
     if (!S_ISDIR(__get_file_type(__g_config.cert_dir)) && !S_ISREG(__get_file_type(__g_config.cert_file))) {
         fprintf(stderr, "Do not found cert file or directory, please specify one!\n");
         clear_config();
-        return -1;
+        return -IOTEX_E_NOERR;
     }
 
     if (!config) {

@@ -6,10 +6,8 @@
 typedef struct {
     /* Rule key to find rule */
     const char *key;
-
     /* data bind to key matched rule */
     void *data;
-
     /* data size, only works for array(array size) or string buffer(in bytes)  */
     size_t size;
 } st_rule_data_bind;
@@ -23,14 +21,12 @@ typedef struct {
 json_parse_rule *find_rule_by_key(json_parse_rule *rule, const char *key) {
 
     if (!rule || !key) {
-
         return NULL;
     }
 
     while (rule && rule->key) {
 
         if (strncmp(rule->key, key, strlen(key)) == 0) {
-
             return rule;
         }
 
@@ -45,7 +41,6 @@ json_parse_rule *find_sub_rule_by_key(json_parse_rule *rule, const char *key) {
     json_parse_rule *found = find_rule_by_key(rule, key);
 
     if (found && found->sub) {
-
         return found->sub;
     }
 
@@ -64,7 +59,6 @@ static void bind_rule_and_data(json_parse_rule *rule, const st_rule_data_bind *b
     while (bind && bind->key) {
 
         if ((rule_to_bind = find_rule_by_key(rule, bind->key))) {
-
             rule_to_bind->value = bind->data;
             rule_to_bind->value_len = bind->size;
         }
@@ -92,12 +86,10 @@ int rule_action_info_bind(json_parse_rule *rule_chain, void *element) {
     json_parse_rule *core_transfer_rule = find_sub_rule_by_key(action_core_rule, "transfer");
 
     if (!action_rule || !action_core_rule || !core_transfer_rule) {
-
         return -1;
     }
 
     st_rule_data_bind info[] = {
-
         {"actHash", (void *) &action_info->actHash, sizeof(action_info->actHash)},
         {"blkHash", (void *) &action_info->blkHash, sizeof(action_info->blkHash)},
         {"blkHeight", (void *) &action_info->blkHeight},
@@ -108,14 +100,12 @@ int rule_action_info_bind(json_parse_rule *rule_chain, void *element) {
     };
 
     st_rule_data_bind action[] = {
-
         {"senderPubKey", (void *) &action_info->action.senderPubKey, sizeof(action_info->action.senderPubKey)},
         {"signature", (void *) &action_info->action.signature, sizeof(action_info->action.signature)},
         {NULL}
     };
 
     st_rule_data_bind action_core[] = {
-
         {"nonce", (void *) &action_info->action.core.nonce},
         {"version", (void *) &action_info->action.core.version},
         {"gasLimit", (void *) &action_info->action.core.gasLimit},
@@ -124,7 +114,6 @@ int rule_action_info_bind(json_parse_rule *rule_chain, void *element) {
     };
 
     st_rule_data_bind core_transfer[] = {
-
         {"amount", (void *) &action_info->action.core.transfer.amount},
         {"recipient", (void *) &action_info->action.core.transfer.recipient, sizeof(action_info->action.core.transfer.recipient)},
         {NULL}
@@ -143,7 +132,6 @@ int rule_action_info_bind(json_parse_rule *rule_chain, void *element) {
 int rule_validator_bind(json_parse_rule *rule_chain, void *element) {
 
     if (!rule_chain || !element) {
-
         return -1;
     }
 
@@ -152,26 +140,22 @@ int rule_validator_bind(json_parse_rule *rule_chain, void *element) {
     json_parse_rule *details_reward_rule = find_sub_rule_by_key(details_rule, "reward");
 
     if (!details_rule || !details_reward_rule) {
-
         return -1;
     }
 
     st_rule_data_bind info[] = {
-
         {"id", (void *) &validator->id, sizeof(validator->id)},
         {"status", (void *) &validator->status},
         {NULL}
     };
 
     st_rule_data_bind details[] = {
-
         {"locktime", (void *) &validator->details.locktime},
         {"minimum_amount", (void *) &validator->details.minimum_amount},
         {NULL}
     };
 
     st_rule_data_bind details_reward[] = {
-
         {"annual", (void *) &validator->details.reward},
         {NULL}
     };

@@ -11,16 +11,16 @@
 #include "iotex_emb.h"
 
 int iotex_emb_init(const iotex_st_config *config) {
-
     return init_config(config);
 }
 
 void iotex_emb_exit() {
-
     clear_config();
 }
 
 int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain) {
+
+    assert(chain != NULL);
 
     json_parse_rule epoch_rules[] = {
         {"num", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.num},
@@ -43,13 +43,16 @@ int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain) {
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_CHAINMETA)) {
         __WARN_MSG__("compose url failed!");
-        return -1;
+        return -IOTEX_E_URL;
     }
 
     return res_get_data(url, chain_meta_rules);
 }
 
 int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta) {
+
+    assert(account != NULL);
+    assert(meta != NULL);
 
     json_parse_rule account_meta[] = {
         {"address", JSON_TYPE_STR, NULL, (void *) &meta->address, sizeof(meta->address)},
@@ -69,7 +72,7 @@ int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta)
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_ACCOUNT, account)) {
         __WARN_MSG__("compose url failed!");
-        return -1;
+        return -IOTEX_E_URL;
     }
 
     return res_get_data(url, account_rules);
@@ -77,40 +80,58 @@ int iotex_emb_get_account_meta(const char *account, iotex_st_account_meta *meta)
 
 int iotex_emb_get_transfer_block(uint128_t block, iotex_st_action_info *action) {
 
+    assert(action != NULL);
+
+    int ret;
     char url[IOTEX_EMB_MAX_URL_LEN];
     char block_str[UINT128_RAW_MAX_LEN];
 
     /* Block height must convert to string, in case vsnprintf can't handle */
     if (!req_compose_url(url, sizeof(url), REQ_GET_TRANSFERS_BY_BLOCK, u1282str(block, block_str, sizeof(block_str)))) {
         __WARN_MSG__("compose url failed!");
-        return -1;
+        return -IOTEX_E_URL;
     }
 
-    return res_get_actions(url, action, 1) == 1 ? 0 : -1;
+    if ((ret = res_get_actions(url, action, 1)) != 1) {
+        return ret;
+    }
+
+    return 0;
 }
 
 int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action) {
 
+    assert(hash != NULL);
+    assert(action != NULL);
+
+    int ret;
     char url[IOTEX_EMB_MAX_URL_LEN];
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_ACTIONS_BY_HASH, hash)) {
         __WARN_MSG__("compose url failed!");
-        return -1;
+        return -IOTEX_E_URL;
     }
 
-    return res_get_actions(url, action, 1) == 1 ? 0 : -1;
+    if ((ret = res_get_actions(url, action, 1)) != 1) {
+        return ret;
+    }
+
+    return 0;
 }
 
 int iotex_emb_get_action_by_addr(const char *addr,
                                  uint32_t start_idx, uint32_t count,
                                  iotex_st_action_info *actions, size_t max_size, size_t *actual_size) {
 
+    assert(addr != NULL);
+    assert(actions != NULL);
+
     int ret;
     char url[IOTEX_EMB_MAX_URL_LEN];
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_ACTIONS_BY_ADDR, addr, start_idx, count)) {
         __WARN_MSG__("compose url failed!");
-        return -1;
+        return -IOTEX_E_URL;
     }
 
     if ((ret = res_get_actions(url, actions, max_size)) < 0) {
@@ -125,6 +146,8 @@ int iotex_emb_get_action_by_addr(const char *addr,
 }
 
 int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, size_t *actual_size) {
+
+    assert(validators != NULL);
 
     char url[IOTEX_EMB_MAX_URL_LEN];
 
@@ -155,7 +178,7 @@ int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, si
 
     if (!req_compose_url(url, sizeof(url), REQ_GET_MEMBER_VALIDATORS)) {
         __WARN_MSG__("compose url failed!");
-        return -1;
+        return -IOTEX_E_URL;
     }
 
     return res_get_data(url, &rule);
@@ -163,10 +186,22 @@ int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, si
 
 int iotex_emb_transfer(const iotex_st_transfer *transfer, iotex_t_hash hash, char **error_desc) {
 
+    assert(transfer != NULL);
+
+    if (!transfer->core.privateKey) {
+        return -IOTEX_E_PRVKEY;
+    }
+
     return res_get_hash((void *)transfer, ACT_TRANSFER,  hash, IOTEX_EMB_LIMIT_HASH_LEN, error_desc);
 }
 
 int iotex_emb_execution(const iotex_st_execution *execution, iotex_t_hash hash, char **error_desc) {
+
+    assert(execution != NULL);
+
+    if (!execution->core.privateKey) {
+        return -IOTEX_E_PRVKEY;
+    }
 
     return res_get_hash((void *)execution, ACT_EXECUTION, hash, IOTEX_EMB_LIMIT_HASH_LEN, error_desc);
 }

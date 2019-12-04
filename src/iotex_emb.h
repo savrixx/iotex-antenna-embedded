@@ -32,7 +32,14 @@ typedef enum {
     IOTEX_E_VER,
     IOTEX_E_CERT,
     IOTEX_E_URL,
-    IOTEX_E_PRVKEY
+    IOTEX_E_PRVKEY,
+    IOTEX_E_MEM,
+    IOTEX_E_REQUEST,
+    IOTEX_E_PARSE,
+    IOTEX_E_RESPONSE,
+    IOTEX_E_UNSUPPORT,
+    IOTEX_E_PBPACK,
+    IOTEX_E_HEX2STR
 } iotex_em_error;
 
 /* Structure for configure cert and api version  */

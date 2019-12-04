@@ -22,7 +22,7 @@ LIBNAME=libiotexemb
 PROJECT_NAME=iotex-antenna-embedded
 RELEASE_TARGET_DIR=objs/$(PROJECT_NAME)
 
-.PHONY:all clean distclean test example install help style statistics no_int128 release
+.PHONY:all clean distclean test example install help style statistics no_int128 release no_int128_test no_int128_unittest
 .SILENT: clean
 
 all:$(TARGETS)

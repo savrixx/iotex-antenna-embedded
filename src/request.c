@@ -208,7 +208,7 @@ char *req_compose_url(char *url, size_t url_max_size, iotex_em_request req, ...)
  * #url: request url, it should be composed with url and data
  * #response: store request response data
  * #response_max_size: #response buffer max len
- * #is_post: set this indicate this is a post request
+ * #is_post: set this indicate it's a post request
  * $return: successed return 0, failed return negative error code
  *
  * TODO:

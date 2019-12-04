@@ -62,13 +62,11 @@ int signer_str2hex(const char *str, uint8_t *hex, size_t size) {
 
     /* Check output buffer size */
     if (size < ((end - begin) + 1) / 2) {
-
         return -1;
     }
 
     /* Skip `0x` */
     if (end - begin >= 2 && *begin == '0' && *(begin + 1) == 'x') {
-
         it += 2;
     }
 
@@ -77,14 +75,12 @@ int signer_str2hex(const char *str, uint8_t *hex, size_t size) {
         high = value(*it, &valid);
 
         if (!valid) {
-
             return -1;
         }
 
         it++;
 
         if (it == end) {
-
             hex[cur++] = high;
             break;
         }
@@ -92,12 +88,10 @@ int signer_str2hex(const char *str, uint8_t *hex, size_t size) {
         low = value(*it, &valid);
 
         if (!valid) {
-
             return -1;
         }
 
         it++;
-
         hex[cur++] = (uint8_t)(high << 4 | low);
     }
 
@@ -106,13 +100,11 @@ int signer_str2hex(const char *str, uint8_t *hex, size_t size) {
 
 /* Get public key from private key */
 void signer_get_public_key(const uint8_t private_key[SIG_PRIVATE_KEY_SIZE], uint8_t public_key[SIG_PUBLIC_KEY_SIZE]) {
-
     ecdsa_get_public_key65(&secp256k1, private_key, public_key);
 }
 
 /* Get data hash (keccak_256) */
 void signer_get_hash(const uint8_t *data, size_t size, uint8_t hash[SIG_HASH_SIZE]) {
-
     keccak_256(data, size, hash);
 }
 
@@ -126,7 +118,6 @@ int signer_get_signature(const uint8_t *data, size_t size,
     signer_get_hash(data, size, digest);
 
     if (ecdsa_sign_digest(&secp256k1, private_key, digest, signature, signature + 64, NULL) != 0) {
-
         return -1;
     }
 
