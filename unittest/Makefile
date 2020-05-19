@@ -40,6 +40,7 @@ pb_unittest: pb_unittest.o
 api_unittest: api_unittest.o
 rule_unittest: rule_unittest.o
 u128_unittest: u128_unittest.o
+utils_unittest: utils_unittest.o
 parse_unittest: parse_unittest.o
 proto_unittest: proto_unittest.o
 signer_unittest: signer_unittest.o
