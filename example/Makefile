@@ -35,6 +35,7 @@ no_int128:
 # Examples
 transfer: transfer.o
 account_meta: account_meta.o
+publish_data: publish_data.o
 
 depend.d:$(wildcard *.h *.c)
 	$(CC) $(CFLAGS) -MM $^ > $@
