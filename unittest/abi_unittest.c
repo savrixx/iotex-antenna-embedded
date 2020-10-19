@@ -22,22 +22,24 @@ const char *out[] = {
 
 void test_abi_pack() {
     int i;
+
     for (i = 0; in[i]; i++) {
-        int data_len = signer_str2hex(in[i], (uint8_t *)input, strlen(in[i])/2);
-        UNITTEST_ASSERT_EQ(data_len, strlen(in[i])/2);
+        int data_len = signer_str2hex(in[i], (uint8_t *)input, strlen(in[i]) / 2);
+        UNITTEST_ASSERT_EQ(data_len, strlen(in[i]) / 2);
 
         uint64_t out_size;
         uint8_t *data = abi_pack_publish((const uint8_t *)input, data_len, &out_size);
         UNITTEST_ASSERT_NE(data, NULL);
 
-        data_len = signer_str2hex(out[i], (uint8_t *)expected, strlen(out[i])/2);
+        data_len = signer_str2hex(out[i], (uint8_t *)expected, strlen(out[i]) / 2);
         UNITTEST_ASSERT_EQ(out_size, data_len);
-        
+
         UNITTEST_ASSERT_STR_EQ(data, expected, data_len);
 
         free(data);
         data = NULL;
     }
+
     UNITTEST_AUTO_PASS();
 }
 

@@ -36,9 +36,11 @@ int main(int argc, char **argv) {
     // assume data[40] contains the 40-bytes we want to publish to contract
     char data[40];
     uint64_t data_size;
+
     if ((tx.data = abi_pack_publish((const uint8_t *)data, 40, &data_size)) == NULL) {
         return IOTEX_E_MEM;
     }
+
     tx.dataLength = data_size;
 
     /* error_desc can be NULL, if don't care error reason */

@@ -3,7 +3,7 @@ CC		= $(CROSS_COMPILE)gcc
 CXX		= $(CROSS_COMPILE)g++
 STRIP	= $(CROSS_COMPILE)strip
 #CFLAGS	= -Wall -g -fPIC -I../trezor-crypto
-CFLAGS	= -Wall -g -fPIC -I./src/crypto -std=gnu99
+CFLAGS	= -Wall -g -fPIC -I./src/crypto -std=gnu99 -D_DEBUG_HTTP_
 CXXFLAGS	= -Wall -g -fPIC -D_DEBUG_JSON_PARSE
 LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl
 #LDSHFLAGS	= -rdynamic -shared -fPIC -lcurl -L. -ltrezor-crypto
