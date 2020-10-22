@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     }
 
     /* Execution */
-    tx.amount = "123";
+    tx.amount = "0";  // 0 since the contract below is not payable
     tx.contract = "io1jjwlujpk7wztptwdjvun268ccsadsd7dtl2alq";
     tx.core.privateKey = "dcdab70604b42d2a215263f5077ebbf6ceeffd46002249cb7e59015135e3bc91";
 
