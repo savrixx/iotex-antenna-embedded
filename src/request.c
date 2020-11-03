@@ -52,6 +52,12 @@ static const iotex_st_request_conf __g_req_configs[] = {
     },
 
     {
+        REQ_READ_CONTRACT_BY_ADDR,
+        {"contract", "addr", NULL},
+        "%s?&method=%s&data=%s",
+    },
+
+    {
         REQ_GET_TRANSFERS_BY_BLOCK,
         {"transfers", "block", NULL},
         "%s",

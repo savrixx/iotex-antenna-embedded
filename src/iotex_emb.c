@@ -145,6 +145,18 @@ int iotex_emb_get_action_by_addr(const char *addr,
     return 0;
 }
 
+int iotex_emb_read_contract_by_addr(const char *addr,
+    const char *method, const char *data, iotex_st_contract_data *contract_data) {
+
+    assert(addr != NULL);
+    assert(method != NULL);
+    assert(data != NULL);
+    assert(contract_data != NULL);
+
+    // TODO: compose url, send http request, parse result
+    return 0;
+}
+
 int iotex_emb_get_validators(iotex_st_validator *validators, size_t max_size, size_t *actual_size) {
 
     assert(validators != NULL);

@@ -96,6 +96,10 @@ typedef struct iotex_st_action_info {
 } iotex_st_action_info;
 
 typedef struct {
+    char data[2048];
+} iotex_st_contract_data;
+
+typedef struct {
     iotex_t_id id;
     iotex_t_boolean status;
     struct {
