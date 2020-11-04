@@ -131,7 +131,7 @@ int res_get_hash(const void *action, uint8_t action_id, char *hash, size_t hash_
  * #max_size: #actions array size
  * $return: successed return actual get actions size, failed -1
  */
-int res_get_actions(const char *request, struct iotex_st_action_info *actions, size_t max_size) {
+int res_get_actions(const char *request, iotex_st_action_info *actions, size_t max_size) {
 
     int ret;
     int32_t actual_size = 0;
@@ -182,4 +182,13 @@ int res_get_actions(const char *request, struct iotex_st_action_info *actions, s
     }
 
     return actual_size;
+}
+
+int res_get_contract_data(const char *request, iotex_st_contract_data *contract_data) {
+    json_parse_rule contract_rules[] = {
+        {"data", JSON_TYPE_STR, NULL, (void *)contract_data->data, sizeof(contract_data->data)},
+        {NULL}
+    };
+
+    return res_get_data(request, contract_rules);
 }

@@ -97,6 +97,7 @@ typedef struct iotex_st_action_info {
 
 typedef struct {
     char data[2048];
+    size_t size;
 } iotex_st_contract_data;
 
 typedef struct {
@@ -192,6 +193,16 @@ int iotex_emb_get_action_by_hash(const char *hash, iotex_st_action_info *action)
 int iotex_emb_get_action_by_addr(const char *addr,
                                  uint32_t start_idx, uint32_t count,
                                  iotex_st_action_info *actions, size_t max_size, size_t *actual_size);
+
+/*
+ * @brief: get contract data by address
+ * #addr: encoded address
+ * #method: hex-encoded contract func signature
+ * #data: hex-encoded calldata
+ * $return: success return 0, failed return negative error code(iotex_em_error)
+ */
+int iotex_emb_read_contract_by_addr(const char *addr,
+    const char *method, const char *data, iotex_st_contract_data *contract_data);
 
 /*
  * @brief: get validator members list

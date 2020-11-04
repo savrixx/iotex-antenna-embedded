@@ -42,7 +42,7 @@ static const iotex_st_request_conf __g_req_configs[] = {
     {
         REQ_GET_ACTIONS_BY_ADDR,
         {"actions", "addr", NULL},
-        "%s?&start=%u&count=%u",
+        "%s?start=%u&count=%u",
     },
 
     {
@@ -54,7 +54,7 @@ static const iotex_st_request_conf __g_req_configs[] = {
     {
         REQ_READ_CONTRACT_BY_ADDR,
         {"contract", "addr", NULL},
-        "%s?&method=%s&data=%s",
+        "%s?method=%s&data=%s",
     },
 
     {

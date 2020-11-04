@@ -3,6 +3,7 @@
 #include "rule.h"
 #include "debug.h"
 #include "parse.h"
+#include "signer.h"
 #include "debug.h"
 #include "config.h"
 #include "request.h"
@@ -153,7 +154,25 @@ int iotex_emb_read_contract_by_addr(const char *addr,
     assert(data != NULL);
     assert(contract_data != NULL);
 
-    // TODO: compose url, send http request, parse result
+    int ret;
+    char url[IOTEX_EMB_MAX_URL_LEN];
+
+    if (!req_compose_url(url, sizeof(url), REQ_READ_CONTRACT_BY_ADDR, addr, method, data)) {
+        __WARN_MSG__("compose url failed!");
+        return -IOTEX_E_URL;
+    }
+
+    if ((ret = res_get_contract_data(url, contract_data)) < 0) {
+        return ret;
+    }
+
+    // contract_data->data is hex-encoded string, convert back to bytes
+    size_t size = strlen(contract_data->data)/2;
+    if ((ret = signer_str2hex(contract_data->data, (uint8_t *)contract_data->data, size)) < 0) {
+        return ret;
+    }
+
+    contract_data->size = size;
     return 0;
 }
 

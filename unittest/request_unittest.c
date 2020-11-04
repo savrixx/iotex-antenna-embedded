@@ -6,6 +6,9 @@
 #include "../src/debug.h"
 #include "../src/request.h"
 #include "../src/iotex_emb.h"
+#include "../src/parse.h"
+#include "../src/signer.h"
+#include "../src/abi_read_contract.h"
 
 
 #define MAX_RESPONSE_LEN (16 * 1024)
@@ -147,11 +150,46 @@ void test_act_transfer() {
     UNITTEST_AUTO_PASS();
 }
 
+void test_get_contract_data() {
+    char url[IOTEX_EMB_MAX_URL_LEN];    
+
+    req_compose_url(url, sizeof(url),
+        REQ_READ_CONTRACT_BY_ADDR,
+        "io1zclqa7w3gxpk47t3y3g9gzujgtl44lastfth28", "c5934222", "0000000000000000000000000000000000333532363536313030373934363132");
+
+    const char *dataURL = "https://pharos.iotex.io/v1/contract/addr/io1zclqa7w3gxpk47t3y3g9gzujgtl44lastfth28?method=c5934222&data=0000000000000000000000000000000000333532363536313030373934363132";
+    UNITTEST_ASSERT_STR_EQ(dataURL, url, strlen(url));
+
+    iotex_st_contract_data contract_data;
+    json_parse_rule contract_rules[] = {
+        {"data", JSON_TYPE_STR, NULL, (void *)contract_data.data, sizeof(contract_data.data)},
+        {NULL}
+    };
+
+    const char *response = "{\"data\":\"00000000000000000000000000000000000000000000000000000000005f77f80000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000013747279706562626c652e696f2f3132333435360000000000000000000000000000000000000000000000000000000000000000000000000000000000000000066162636465660000000000000000000000000000000000000000000000000000\"}";
+    UNITTEST_ASSERT_EQ(0, json_parse_response(response, contract_rules));
+
+    // contract_data->data is hex-encoded string, convert back to bytes
+    size_t size = strlen(contract_data.data)/2;
+    UNITTEST_ASSERT_EQ(size, signer_str2hex(contract_data.data, (uint8_t *)contract_data.data, size));
+    contract_data.size = size;
+    UNITTEST_ASSERT_EQ(256, contract_data.size);
+
+    // verify parsing order info from contract data
+    UNITTEST_ASSERT_EQ(6256632, abi_get_order_start(contract_data.data, contract_data.size));
+    UNITTEST_ASSERT_EQ(4, abi_get_order_duration(contract_data.data, contract_data.size));
+    const char *result = abi_get_order_endpoint(contract_data.data, contract_data.size);
+    UNITTEST_ASSERT_STR_EQ("trypebble.io/123456", result, strlen(result));
+    result = abi_get_order_token(contract_data.data, contract_data.size);
+    UNITTEST_ASSERT_STR_EQ("abcdef", result, strlen(result));
+    UNITTEST_AUTO_PASS();
+}
 
 int main(int argc, char **argv) {
 
     iotex_emb_init(NULL);
 
+    test_get_contract_data();
     test_get_chainmeta();
     test_get_account_info(TEST_ACCOUNT_ADDR);
     test_get_actions_by_hash(TEST_ACTION_HASH);

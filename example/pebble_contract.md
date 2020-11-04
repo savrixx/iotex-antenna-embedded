@@ -16,9 +16,15 @@ if (iotex_emb_read_contract_by_addr(pebble, method, data, &contract_data) != 0) 
 }
 
 // parse order info
-uint64_t duration = abi_get_order_duration(contract_data.data); // number of blocks subscriber paid to receive data
-const char *endpoint = abi_get_order_endpoint(contract_data.data); // subscriber's storage endpoint address
-const char *token = abi_get_order_token(contract_data.data); // subscriber's storage endpoint token
+uint64_t duration = abi_get_order_duration(contract_data.data, contract_data.size); // number of blocks subscriber paid to receive data
+const char *endpoint = abi_get_order_endpoint(contract_data.data, contract_data.size); // subscriber's storage endpoint address
+const char *token = abi_get_order_token(contract_data.data, contract_data.size); // subscriber's storage endpoint token
 
 // device should start sending IoT data to the subscriber's storage endpoint for duration * 5 seconds
+
+// free the endpoint and token
+free(endpoint);
+endpoint = NULL;
+free(token);
+token = NULL;
 ```
