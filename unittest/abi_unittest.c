@@ -2,6 +2,7 @@
 #include <string.h>
 #include "unittest.h"
 #include "../src/abi_pack.h"
+#include "../src/abi_read_contract.h"
 #include "../src/endian_conv.h"
 #include "../src/signer.h"
 
@@ -21,9 +22,7 @@ const char *out[] = {
 };
 
 void test_abi_pack() {
-    int i;
-
-    for (i = 0; in[i]; i++) {
+    for (int i = 0; in[i]; i++) {
         int data_len = signer_str2hex(in[i], (uint8_t *)input, strlen(in[i]) / 2);
         UNITTEST_ASSERT_EQ(data_len, strlen(in[i]) / 2);
 
@@ -43,7 +42,31 @@ void test_abi_pack() {
     UNITTEST_AUTO_PASS();
 }
 
+void test_abi_get_order() {
+    const char *in = "00000000000000000000000000000000000000000000000000000000005f77f80000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000013747279706562626c652e696f2f3132333435360000000000000000000000000000000000000000000000000000000000000000000000000000000000000000066162636465660000000000000000000000000000000000000000000000000000";
+    int data_len = signer_str2hex(in, (uint8_t *)input, 256);
+
+    UNITTEST_ASSERT_EQ(0, abi_get_order_start(input, 31));
+    UNITTEST_ASSERT_EQ(0, abi_get_order_duration(input, 63));
+    UNITTEST_ASSERT_EQ(NULL, abi_get_order_endpoint(input, 95));
+    UNITTEST_ASSERT_EQ(NULL, abi_get_order_endpoint(input, 159));
+    UNITTEST_ASSERT_EQ(NULL, abi_get_order_endpoint(input, 178));
+    UNITTEST_ASSERT_EQ(NULL, abi_get_order_token(input, 127));
+    UNITTEST_ASSERT_EQ(NULL, abi_get_order_token(input, 223));
+    UNITTEST_ASSERT_EQ(NULL, abi_get_order_token(input, 229));
+
+    UNITTEST_ASSERT_EQ(6256632, abi_get_order_start(input, 256));
+    UNITTEST_ASSERT_EQ(4, abi_get_order_duration(input, 256));
+    const char *result = abi_get_order_endpoint(input, 256);
+    UNITTEST_ASSERT_STR_EQ("trypebble.io/123456", result, strlen(result));
+    result = abi_get_order_token(input, 256);
+    UNITTEST_ASSERT_STR_EQ("abcdef", result, strlen(result));
+
+    UNITTEST_AUTO_PASS();
+}
+
 int main(int argc, char **argv) {
     test_abi_pack();
+    test_abi_get_order();
     return 0;
 }
