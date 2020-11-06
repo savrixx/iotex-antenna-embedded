@@ -16,11 +16,28 @@ if (iotex_emb_read_contract_by_addr(pebble, method, data, &contract_data) != 0) 
 }
 
 // parse order info
-uint64_t duration = abi_get_order_duration(contract_data.data, contract_data.size); // number of blocks subscriber paid to receive data
+uint64_t start = abi_get_order_start(contract_data.data, contract_data.size); // starting block subscriber paid to receive data
+uint32_t duration = abi_get_order_duration(contract_data.data, contract_data.size); // number of blocks subscriber paid to receive data
 const char *endpoint = abi_get_order_endpoint(contract_data.data, contract_data.size); // subscriber's storage endpoint address
 const char *token = abi_get_order_token(contract_data.data, contract_data.size); // subscriber's storage endpoint token
 
-// device should start sending IoT data to the subscriber's storage endpoint for duration * 5 seconds
+// calculate the duration we need to send IoT data
+iotex_st_chain_meta meta = {};
+if (iotex_emb_get_chain_meta(&chain) != 0) {
+    // error handling
+}
+
+
+if (start + duration > chain.height) {
+    duration = (start + duration - chain.height) * 5;
+} else {
+    // subscription already expired
+    duration = 0;
+}
+
+if (duration > 0) {
+    // start sending data to the subscriber's storage endpoint for 'duration' seconds
+}
 
 // free the endpoint and token
 free(endpoint);
