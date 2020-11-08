@@ -24,17 +24,17 @@ int iotex_emb_get_chain_meta(iotex_st_chain_meta *chain) {
     assert(chain != NULL);
 
     json_parse_rule epoch_rules[] = {
-        {"num", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.num},
-        {"height", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.height},
-        {"gravityChainStartHeight", JSON_TYPE_NUMBER, NULL, (void *) &chain->epoch.gravityChainStartHeight},
+        {"num", JSON_TYPE_NUMBER64, NULL, (void *) &chain->epoch.num},
+        {"height", JSON_TYPE_NUMBER64, NULL, (void *) &chain->epoch.height},
+        {"gravityChainStartHeight", JSON_TYPE_NUMBER64, NULL, (void *) &chain->epoch.gravityChainStartHeight},
         {NULL}
     };
 
     json_parse_rule chain_meta_rules[] = {
 
-        {"height", JSON_TYPE_NUMBER, NULL, (void *) &chain->height},
-        {"numActions", JSON_TYPE_NUMBER, NULL, (void *) &chain->numActions},
-        {"tps", JSON_TYPE_NUMBER, NULL, (void *) &chain->tps},
+        {"height", JSON_TYPE_NUMBER64, NULL, (void *) &chain->height},
+        {"numActions", JSON_TYPE_NUMBER64, NULL, (void *) &chain->numActions},
+        {"tps", JSON_TYPE_NUMBER64, NULL, (void *) &chain->tps},
         {"epoch", JSON_TYPE_OBJECT, epoch_rules},
         {"tpsFloat", JSON_TYPE_DOUBLE, NULL, (void *) &chain->tpsFloat},
         {NULL,}

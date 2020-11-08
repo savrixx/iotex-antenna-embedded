@@ -60,13 +60,13 @@ typedef struct {
 } iotex_st_account_meta;
 
 typedef struct {
-    iotex_t_number height;
-    iotex_t_number numActions;
-    iotex_t_number tps;
+    uint64_t height;
+    uint64_t numActions;
+    uint64_t tps;
     struct {
-        iotex_t_number num;
-        iotex_t_number height;
-        iotex_t_number gravityChainStartHeight;
+        uint64_t num;
+        uint64_t height;
+        uint64_t gravityChainStartHeight;
     } epoch;
     double tpsFloat;
 } iotex_st_chain_meta;
