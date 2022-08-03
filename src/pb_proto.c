@@ -44,6 +44,7 @@ static int proto_gen_action(const iotex_st_act_core *core,
         {PB_WT_VARINT, AC_NONCE, (void *)core->nonce},
         {PB_WT_VARINT, AC_GAS_LIMIT, (void *)core->gasLimit},
         {PB_WT_LD, AC_GAS_PRICE, (void *)core->gasPrice, SAFE_STRLEN(core->gasPrice)},
+        {PB_WT_VARINT, AC_CHAIN_ID, (void *)core->chainID},
         {PB_WT_EMB, action_id, (void *)action, action_size},
     };
 

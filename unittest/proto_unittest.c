@@ -12,6 +12,7 @@ void test_transfer_action() {
     uint64_t nonce = 123;
     uint64_t gasLimit = 888;
     const char *gasPrice = "999";
+    uint64_t chainID = 1;
     const char *tx_amount = "456";
     const char *tx_payload = "68656c6c6f20776f726c6421";
     const char *tx_recipient = "io187wzp08vnhjjpkydnr97qlh8kh0dpkkytfam8j";
@@ -31,6 +32,7 @@ void test_transfer_action() {
     tx.core.nonce = &nonce;
     tx.core.gasLimit = &gasLimit;
     tx.core.gasPrice = gasPrice;
+    tx.core.chainID = &chainID;
     tx.core.privateKey = private_key_str;
 
     tx.amount = tx_amount;
@@ -43,13 +45,13 @@ void test_transfer_action() {
     UNITTEST_ASSERT_NE(action_byte_len, -1);
 
     str_len = signer_hex2str(action_bytes, action_byte_len, str_buffer, sizeof(str_buffer));
-    UNITTEST_ASSERT_STR_EQ(str_buffer, "0a4c0801107b18f8062203393939523e0a033435361229696f313837777a703038766e686a6a706b79646e723937716c68386b683064706b6b797466616d386a1a0c68656c6c6f20776f726c64211241044e18306ae9ef4ec9d07bf6e705442d4d1a75e6cdf750330ca2d880f2cc54607c9c33deb9eae9c06e06e04fe9ce3d43962cc67d5aa34fbeb71270d4bad3d648d91a41555cc8af4181bf85c044c3201462eeeb95374f78aa48c67b87510ee63d5e502372e53082f03e9a11c1e351de539cedf85d8dff87de9d003cb9f92243541541a000", str_len);
+    UNITTEST_ASSERT_STR_EQ(str_buffer, "0a4e0801107b18f80622033939392801523e0a033435361229696f313837777a703038766e686a6a706b79646e723937716c68386b683064706b6b797466616d386a1a0c68656c6c6f20776f726c64211241044e18306ae9ef4ec9d07bf6e705442d4d1a75e6cdf750330ca2d880f2cc54607c9c33deb9eae9c06e06e04fe9ce3d43962cc67d5aa34fbeb71270d4bad3d648d91a41a32de2388362286f23cdab496016f1810257217e4a4e85062c1a1a62665bc35e3c800eab718f4715c8f7a74247f7f4059d81a81fbecd232f041ce94b31be702c00", str_len);
 
     /* Calc action bytes hash */
     memset(str_buffer, 0, sizeof(str_buffer));
     signer_get_hash(action_bytes, action_byte_len, action_hash);
     str_len = signer_hex2str(action_hash, sizeof(action_hash), str_buffer, sizeof(str_buffer));
-    UNITTEST_ASSERT_STR_EQ(str_buffer, "6c84ac119058e859a015221f87a4e187c393d0c6ee283959342eac95fad08c33", str_len);
+    UNITTEST_ASSERT_STR_EQ(str_buffer, "0e32350ee48947b24be29159bc9dbdaee20b4a8774c2157e2392c9dbd8882ecb", str_len);
 
     UNITTEST_AUTO_PASS();
 }

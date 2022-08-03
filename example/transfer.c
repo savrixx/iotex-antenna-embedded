@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
     iotex_st_transfer tx = {0};
     iotex_st_config config = {0};
     iotex_st_action_info tx_action_info;
-    uint64_t version = 1, nonce = 1, gasLimit = 1000000;
+    uint64_t version = 1, nonce = 1, gasLimit = 1000000, chainID = 1;
 
     config.ver = 1;
     config.cert_file = "cacert.pem";
@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
     tx.core.version = &version;
     tx.core.gasLimit = &gasLimit;
     tx.core.gasPrice  = "1000000000000";
+    tx.core.chainID = &chainID;
 
     /* error_desc can be NULL, if don't care error reason */
     if ((ret = iotex_emb_transfer(&tx, tx_hash, &error_desc)) != 0) {

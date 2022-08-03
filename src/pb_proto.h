@@ -24,6 +24,7 @@ typedef enum {
     AC_NONCE,
     AC_GAS_LIMIT,
     AC_GAS_PRICE,
+    AC_CHAIN_ID,
 } proto_em_action_core;
 
 typedef enum {

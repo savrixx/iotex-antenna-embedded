@@ -78,6 +78,7 @@ typedef struct iotex_st_action_info {
             iotex_t_number version;
             iotex_t_number gasLimit;
             iotex_t_number gasPrice;
+            iotex_t_number chainID;
             struct {
                 iotex_t_number amount;
                 iotex_t_account recipient;
@@ -118,6 +119,7 @@ typedef struct {
     const uint64_t *nonce;
     const uint64_t *gasLimit;
     const char *gasPrice;
+    const uint64_t *chainID;
     const char *privateKey;
 } iotex_st_act_core;
 
